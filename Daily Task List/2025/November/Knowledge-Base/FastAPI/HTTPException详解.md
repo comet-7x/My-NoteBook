@@ -1,0 +1,31 @@
+# FastAPI HTTPException 详解
+
+## 什么是 `HTTPException`
+
+它是 FastAPI 中**处理 HTTP 响应状态异常的核心工具**。
+
+当您在代码中 `raise` 一个 `HTTPException` 时，FastAPI 会自动捕获它，并将其转化为一个标准化的 HTTP 错误响应，发送给客户端。
+
+## 核心特点
+
+- **自动转换**: 抛出后 FastAPI 会自动转化为包含 `status_code`、`detail`（详情）、`headers` 的标准 HTTP 响应。
+- **Pydantic 联动**: 与 Pydantic 校验深度集成。当请求的路径/查询参数或请求体不满足 Pydantic 模型定义的规则时，FastAPI 会**自动抛出 `status_code` 为 422 的 `HTTPException`**，您无需手动处理。
+- **格式灵活**: `detail` 参数支持字符串、字典、列表等格式，返回时会自动序列化为 JSON，方便前端解析。
+- **语义清晰**: 开发者只需关注「应该返回哪个状态码」，而无需手动构造 `Response` 对象，极大简化了错误处理流程。
+
+## 核心分类（按 HTTP 状态码场景）
+
+| HTTP 状态码 | 核心含义（FastAPI 场景化解释） | 典型使用场景 | 手动抛出示例 |
+| :--- | :--- | :--- | :--- |
+| **400 Bad Request** | **请求参数 / 格式无效（语法错误）** | 1. 缺少必填查询参数；<br>2. JSON 请求体格式错误（如括号不匹配）；<br>3. 参数类型不匹配（如预期 `int` 却传 `string`）。 | `from fastapi import HTTPException`<br><br>`raise HTTPException(status_code=400, detail="缺少必填参数：token")` |
+| **401 Unauthorized** | **未认证 / 认证失败（需要合法身份凭证）** | 1. 访问需要登录的接口未携带 Token；<br>2. Token 过期、伪造或无效；<br>3. OAuth2 授权流程失败。 | `# 结合依赖注入的认证校验`<br>`def get_current_user(token: str = Depends(oauth2_scheme)):`<br>&nbsp;&nbsp;`if not is_valid_token(token):`<br>&nbsp;&nbsp;&nbsp;&nbsp;`raise HTTPException(`<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`status_code=401,`<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`detail="Token 无效或已过期",`<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`headers={"WWW-Authenticate": "Bearer"}, # 提示前端使用 Bearer Token`<br>&nbsp;&nbsp;&nbsp;&nbsp;`)` |
+| **403 Forbidden** | **已认证，但无权限执行操作（身份合法但无资格）** | 1. 普通用户尝试访问 `/api/admin` 管理员接口；<br>2. 登录用户尝试修改他人数据；<br>3. 权限角色不满足（如仅「超级管理员」可删除数据）。 | `def check_admin(user: User = Depends(get_current_user)):`<br>&nbsp;&nbsp;`if user.role != "admin":`<br>&nbsp;&nbsp;&nbsp;&nbsp;`raise HTTPException(status_code=403, detail="无管理员权限，禁止操作")` |
+| **404 Not Found** | **请求的资源不存在** | 1. 访问不存在的 URL；<br>2. 资源 ID 不存在（如 `/api/user/999`，该用户不存在）；<br>3. 请求的文件 / 接口已下线。 | `@app.get("/api/user/{user_id}")`<br>`def get_user(user_id: int):`<br>&nbsp;&nbsp;`user = db.get(user_id)`<br>&nbsp;&nbsp;`if not user:`<br>&nbsp;&nbsp;&nbsp;&nbsp;`raise HTTPException(status_code=404, detail=f"用户 ID {user_id} 不存在")` |
+| **409 Conflict** | **资源冲突（请求操作与资源当前状态矛盾）** | 1. 创建用户时用户名已存在；<br>2. 并发更新数据时版本冲突；<br>3. 重复提交已处理的表单。 | `@app.post("/api/user")`<br>`def create_user(user: User):`<br>&nbsp;&nbsp;`if db.exists(username=user.name):`<br>&nbsp;&nbsp;&nbsp;&nbsp;`raise HTTPException(status_code=409, detail=f"用户名 {user.name} 已被占用")` |
+| **422 Unprocessable Entity** | **请求格式正确，但语义无效（数据校验失败）** | **FastAPI 最常用场景（自动抛出为主）**：<br>1. Pydantic 模型字段校验失败（如年龄 `age=-1`、邮箱格式不合法）；<br>2. 请求体结构正确，但字段值不符合业务规则。 | `class User(BaseModel):`<br>&nbsp;&nbsp;`name: str`<br>&nbsp;&nbsp;`age: int = Field(ge=0, le=120) # 年龄 0-120`<br><br>`@app.post("/api/user")`<br>`def create_user(user: User): # 传 age=-5 会自动抛 422`<br>&nbsp;&nbsp;`pass` |
+| **429 Too Many Requests** | **请求过于频繁（触发限流）** | 客户端短时间内发送大量请求（如 1 分钟超过 100 次），触发限流中间件（如 `slowapi`）。 | `# 结合 slowapi 限流`<br>`@app.get("/api/limit")`<br>`@limiter.limit("100/minute")`<br>`def limited_endpoint():`<br>&nbsp;&nbsp;`pass`<br>`# 限流触发时 slowapi 自动抛 429` |
+| **500 Internal Server Error** | **服务器内部未知错误（代码 Bug）** | 1. 代码逻辑异常，未被捕获（如 `NameError`, `TypeError`）；<br>2. 数据库连接失败、外部服务调用异常且未处理；<br>3. 任何开发者未预料到的运行时错误。 | 通常由 FastAPI **自动捕获并抛出**。最佳实践是：在代码中**尽量避免手动抛出 500**，而是让框架处理未知异常，同时通过日志系统记录详细错误信息以便排查。 |
+| **502 Bad Gateway** | **网关或代理服务器错误（上游服务失败）** | 1. FastAPI 作为网关调用下游微服务，下游服务挂了或超时；<br>2. Nginx/Ingress 代理的 FastAPI 应用本身未启动或崩溃。 | 手动抛出较少，通常由网关层（如 Nginx）自动返回。但在服务网格或网关应用中，可手动抛出以明确表示上游问题：<br>`try:`<br>&nbsp;&nbsp;`...`<br>`except httpx.HTTPStatusError:`<br>&nbsp;&nbsp;`raise HTTPException(status_code=502, detail="下游服务调用失败")` |
+| **503 Service Unavailable** | **服务器暂时不可用（过载或维护）** | 1. 服务器正在部署新版本；<br>2. 依赖的核心服务（如数据库）正在维护或已达最大连接数；<br>3. 服务器负载过高，无法处理新请求。 | `if not is_database_connected():`<br>&nbsp;&nbsp;`raise HTTPException(`<br>&nbsp;&nbsp;&nbsp;&nbsp;`status_code=503,`<br>&nbsp;&nbsp;&nbsp;&nbsp;`detail="服务暂时不可用",`<br>&nbsp;&nbsp;&nbsp;&nbsp;`headers={"Retry-After": "60"} # 提示客户端 60 秒后重试`<br>&nbsp;&nbsp;`)` |
+| **4xx/5xx (Auto)** | **其他自动处理** | - **405 Method Not Allowed**: 路由仅支持 `POST` 却用 `GET` 请求。<br>- **406 Not Acceptable**: 客户端请求头 `Accept` 的格式服务器无法返回。 | FastAPI 会在匹配路由时**自动抛出**（无需手动处理）。 |
+
