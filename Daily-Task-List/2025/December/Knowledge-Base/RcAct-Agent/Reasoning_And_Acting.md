@@ -44,3 +44,26 @@ Question: {input}
 Thought:{agent_scratchpad}
 ```
 
+
+**代码逻辑 (伪代码)：**
+```python
+history = prompt_template.format(user_input="特斯拉现在的股价乘以2是多少？")
+
+while True:
+    # 1. 让大模型生成回复
+    response = llm.predict(history)
+    
+    # 2. 判断是否结束
+    if "Final Answer:" in response:
+        print(response)
+        break
+    
+    # 3. 解析 Action 和 Action Input
+    action, action_input = parse_response(response)
+    
+    # 4. 执行工具 (Observation)
+    observation = run_tool(action, action_input)
+    
+    # 5. 将结果拼接回历史上下文，继续循环
+    history += f"\n{response}\nObservation: {observation}\n"
+```
