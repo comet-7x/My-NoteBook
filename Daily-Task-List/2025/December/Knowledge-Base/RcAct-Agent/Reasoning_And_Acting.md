@@ -1,6 +1,6 @@
-## 1. 什么是 ReAct？
+## 1. 什么是 $ReAct$？
 
-**ReAct** 是 **Re**asoning（推理）与 **Act**ing（行动）的缩写。
+**$ReAct$** 是 **Re**asoning（推理）与 **Act**ing（行动）的缩写。
 
 - **核心理念：** 只有推理（如 Chain-of-Thought）容易产生幻觉，只有行动（如简单的 API 调用）缺乏灵活性。ReAct 将两者结合，让大模型在执行任务时，交替进行 **“思考 -> 行动 -> 观察”** 的循环。
     
@@ -14,12 +14,12 @@
         
     4. **循环：** 模型根据观察结果再次思考，直到任务完成。
 
-## 2. 如何实现 ReAct？
+## 2. 如何实现 $ReAct$？
 
-实现 ReAct 主要有两种方式：**原生 Prompt 实现（手写循环）** 和 **使用 Agent 框架（如 LangChain/LangGraph）**。
+实现 $ReAct$ 主要有两种方式：**原生 Prompt 实现（手写循环）** 和 **使用 Agent 框架（如 `LangChain/LangGraph`）**。
 ### 方式一：原生 Prompt 实现 (理解原理)
 
-这是 ReAct 的本质。你需要构建一个 Prompt 模板，并写一个 Python `while` 循环来驱动它。
+这是 $ReAct$ 的本质。你需要构建一个 Prompt 模板，并写一个 Python `while` 循环来驱动它。
 
 **Prompt 模板示例：**
 ```python
