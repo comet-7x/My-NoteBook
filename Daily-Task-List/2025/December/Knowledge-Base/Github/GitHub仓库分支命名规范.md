@@ -31,15 +31,15 @@ $$\text{branch-type}/\text{description-or-ID}$$
 
 #### B. 详细命名示例
 
-|**分支类型**|**推荐命名格式**|**示例**|**说明**|
-|---|---|---|---|
-|**功能**|`feature/[short-description]` 或 `feature/[issue-id]-[description]`|`feature/user-profile-page`|开发用户资料页。|
-|||`feature/ISSUE-100-login-oauth`|关联到 Issue #100，实现 OAuth 登录。|
-|**热修复**|`hotfix/[short-description]` 或 `hotfix/[issue-id]-[description]`|`hotfix/fix-payment-bug`|紧急修复生产环境的支付 bug。|
-|||`hotfix/CRITICAL-45-api-timeout`|关联到 Issue #45，修复 API 超时问题。|
-|**修复**|`bugfix/[short-description]` 或 `bugfix/[issue-id]-[description]`|`bugfix/sidebar-alignment`|修复开发分支上的侧边栏对齐问题。|
-|**发布**|`release/[version-number]`|`release/v1.2.0`|准备发布 1.2.0 版本。|
-|**重构/优化**|`refactor/[description]`|`refactor/split-large-service`|重构，拆分大型服务模块。|
+| **分支类型**  | **推荐命名格式**                                                         | **示例**                           | **说明**                      |
+| --------- | ------------------------------------------------------------------ | -------------------------------- | --------------------------- |
+| **功能**    | `feature/[short-description]` 或 `feature/[issue-id]-[description]` | `feature/user-profile-page`      | 开发用户资料页。                    |
+|           |                                                                    | `feature/ISSUE-100-login-oauth`  | 关联到 Issue #100，实现 OAuth 登录。 |
+| **热修复**   | `hotfix/[short-description]` 或 `hotfix/[issue-id]-[description]`   | `hotfix/fix-payment-bug`         | 紧急修复生产环境的支付 bug。            |
+|           |                                                                    | `hotfix/CRITICAL-45-api-timeout` | 关联到 Issue #45，修复 API 超时问题。  |
+| **修复**    | `bugfix/[short-description]` 或 `bugfix/[issue-id]-[description]`   | `bugfix/sidebar-alignment`       | 修复开发分支上的侧边栏对齐问题。            |
+| **发布**    | `release/[version-number]`                                         | `release/v1.2.0`                 | 准备发布 1.2.0 版本。              |
+| **重构/优化** | `refactor/[description]`                                           | `refactor/split-large-service`   | 重构，拆分大型服务模块。                |
 
 #### C.通用命名原则（所有分支需遵守）
 1. **字符规范**：仅使用**小写字母、数字、连字符（-）、斜杠（/）**，避免空格、下划线、特殊符号（!@#$%^&*）、中文（防止乱码）；
