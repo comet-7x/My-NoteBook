@@ -921,6 +921,7 @@ sudo apt install nautilus -y
 若要启动，请输入： `nautilus`
 
 
+### 5.5 安装 ZSH 终端：
 
 
 
