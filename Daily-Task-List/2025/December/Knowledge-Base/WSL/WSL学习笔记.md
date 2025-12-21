@@ -208,10 +208,62 @@ wsl -d Ubuntu
 它会从你指定的新位置加载，并且你的所有数据、用户、配置都会和之前一样。
 
 
+### 2.4 新增用户：
+#### ① 创建用户
+```bash
+adduser 你的用户名
+```
+系统会提示你输入密码（输入时屏幕不显示，输完回车即可），剩下的全名等信息直接一路回车。
+
+#### ② 给 新用户 管理员权限：
+```bash
+usermod -aG sudo 你的用户名
+```
+
+#### ③ 退出并重启 WSL：
+```bash
+exit
+```
+然后在 Windows 终端执行：
+```bash
+wsl --shutdown
+wsl
+```
+
+示例：
+```bash
+```bash
+root@localhost:~# adduser comet
+info: Adding user `comet' ...
+info: Selecting UID/GID from range 1000 to 59999 ...
+info: Adding new group `comet' (1000) ...
+info: Adding new user `comet' (1000) with group `comet (1000)' ...
+info: Creating home directory `/home/comet' ...
+info: Copying files from `/etc/skel' ...
+New password:
+Retype new password:
+passwd: password updated successfully
+Changing the user information for comet
+Enter the new value, or press ENTER for the default
+        Full Name []:
+        Room Number []:
+        Work Phone []:
+        Home Phone []:
+        Other []:
+Is the information correct? [Y/n] y
+info: Adding new user `comet' to supplemental / extra groups `users' ...
+info: Adding user `comet' to group `users' ...
+root@localhost:~# usermod -aG sudo comet
+root@localhost:~# exit
+logout
 
 
+```
+```
 
 ## 3. 在 WSL 中使用 GPU：
+
+### 3.1 检查GPU是否可用
 
 #### **① 更新软件包列表：**
 
