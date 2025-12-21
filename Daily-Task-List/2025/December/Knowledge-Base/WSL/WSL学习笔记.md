@@ -922,8 +922,86 @@ sudo apt install nautilus -y
 
 
 ### 5.5 安装 ZSH 终端：
+#### ① 安装宿主工具：Windows Terminal (预览版或正式版)：
+如果你还在用 Windows 自带的 CMD 黑色窗口，建议立刻替换。
+- **安装方法**：打开 Windows 的 **Microsoft Store**，搜索并安装 **"Windows Terminal"**（或者叫“终端”）。
+- **优点**：支持多标签页、高度自定义配色、完美支持透明度、支持 Unicode 字符（显示图标）。
+
+#### ② 安装高效 Shell：Zsh + Oh My Zsh：
+Ubuntu 默认的 `bash` 虽然稳定，但 Tab 补全不够智能。我们换成 `zsh`。
+1. **在 WSL 中安装 Zsh**：
+```bash
+sudo apt update
+sudo apt install zsh -y
+```
+
+2. **安装 Oh My Zsh（管理配置的框架）**：
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+- 安装过程中会问你是否设为默认 Shell，输入 `y`。_
+
+3. 实现“地表最强” Tab 补全和历史建议
+这是你最需要的功能，需要安装两个神级插件：
+**A. 自动建议 (zsh-autosuggestions)**
+它会根据你的历史记录，用灰色文字帮你预测命令，按 **→** 键即可一键补全。
+```bash
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+```
+
+ **B. 语法高亮 (zsh-syntax-highlighting)**
+命令输对了是绿色，输错了是红色，一眼就能看出单词拼错没。
+```bash
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+```
+
+ **C. 启用插件**
+1. 打开配置文件：`nano ~/.zshrc`
+
+2. 找到 `plugins=(git)` 这一行，修改为：
+```bash
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+```
+
+3. 保存并退出（Ctrl+O, Enter, Ctrl+X），然后刷新配置：
+```bash
+source ~/.zshrc
+```
 
 
+#### ③ 让 VS Code 终端也变漂亮
+1. 在 VS Code 中按下 `Ctrl + Shift + P`。
+2. 搜索并选择 `Terminal: Select Default Profile`。
+3. 选择 **WSL (Ubuntu)**。
+4. 由于 Zsh 使用了一些特殊符号，建议在 Windows 上安装 **Nerd Fonts**（如 _MesloLGS NF_），并在 VS Code 设置中搜索 `Terminal Integrated Font Family` 修改为该字体，否则可能会有乱码小方块。
+
+
+如果发现搜索`Terminal: Select Default Profile`无结果时：
+
+
+1. 确认 Zsh 是否安装成功
+首先回到你的 WSL 终端（那个黑色的命令行窗口），输入：
+```bash
+which zsh
+```
+- **如果返回** `/usr/bin/zsh`，说明安装成功。
+- **如果返回空**，请重新执行 `sudo apt install zsh -y`。
+
+2. 在 VS Code 中手动指定 Zsh 路径
+如果下拉菜单里还是没有，我们可以直接在 VS Code 的设置里“写死”它：
+	- 在 VS Code 中按 `Ctrl + ,` (逗号) 打开设置。
+	- 在搜索框输入 `automationShell.linux`。
+	- 点击 **“在 settings.json 中编辑”**。
+	- 在打开的 JSON 文件中，添加或修改以下配置（确保在大括号 `{}` 内部）：
+```json
+	"terminal.integrated.defaultProfile.linux": "zsh",
+	"terminal.integrated.profiles.linux": {
+	"zsh": {
+		"path": "/usr/bin/zsh"
+	}
+}
+```
+3. **重启 VS Code**（彻底关掉再开）
 
 ## 6. Python 以及依赖项安装：
 
