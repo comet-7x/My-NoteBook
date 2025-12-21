@@ -1002,6 +1002,17 @@ which zsh
 }
 ```
 3. **重启 VS Code**（彻底关掉再开）
+4. 处理“乱码”问题（非常重要）
+当你切换到 Zsh 并且 Oh My Zsh 生效后，你的终端可能会出现很多 **“问号”或“方块”**。
+	- **原因**：Oh My Zsh 的主题使用了特殊图标（Nerd Fonts）。
+	- **解决方法**：
+	    
+	    1. 在 Windows 下载并安装 [MesloLGS NF](https://www.google.com/search?q=https://github.com/romkatv/dotfiles-public/raw/master/dotfiles/.local/share/fonts/NerdFonts/MesloLGS%2520NF%2520Regular.ttf&authuser=1)。
+	        
+	    2. 在 VS Code 设置里搜索 `font family`。
+	        
+	    3. 在 `Terminal > Integrated: Font Family` 框里填入：`MesloLGS NF`。
+
 
 ## 6. Python 以及依赖项安装：
 
