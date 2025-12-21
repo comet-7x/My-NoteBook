@@ -297,6 +297,89 @@ OpenGL renderer string: D3D12 (NVIDIA GeForce RTX 3060 Laptop GPU)
 
 ## 4. WSL 共享 Windows 系统的网络代理：
 
+
+### 4.1 镜像网络模式 (Mirrored Mode)：
+这是微软在 2023 年底推出的新特性，最推荐使用。它让 WSL2 和 Windows 彻底处于同一个网络层级，WSL2 会直接继承 Windows 的代理设置，连 IP 地址都和 Windows 一模一样。
+#### ① 操作步骤
+1. 在 Windows 中，按下 `Win + R`，输入 `%UserProfile%` 并回车。
+2. 在打开的文件夹中新建一个文件，命名为 `.wslconfig`（如果已有则直接打开）。
+3. 粘贴以下带注释的代码：
+```Ini
+[wsl2]
+# 开启镜像网络模式，让 WSL 共享 Windows 的网络堆栈
+networkingMode=mirrored
+
+# 开启 DNS 隧道，让 WSL 使用 Windows 的 DNS 解析，解决 DNS 污染
+dnsTunneling=true
+
+# 自动应用 Windows 的代理设置到 WSL
+autoProxy=true
+
+# 允许 WSL 穿透 Windows 防火墙（镜像模式必需）
+firewall=true
+```
+
+4. **保存并重启**：在 PowerShell 中执行 `wsl --shutdown`，然后再次打开 Ubuntu。
+
+#### ② 优点与局限
+- **优点**：配置简单，几乎不需要在 Linux 内部改任何代码；解决了很多网络协议（如 UDP、IPv6）的兼容性问题。
+- **局限**：需要 Windows 11 22H2 以上版本，且 WSL 内核版本较新。
+
+
+### 4.2 环境变量手动模式 (Environment Variables)：
+如果你的系统不支持镜像模式，或者你希望通过命令手动控制开关，使用这种方法。它通过设置 `http_proxy` 等环境变量引导 Linux 流量走向宿主机代理端口。
+#### ① 前置条件 (重要)
+- **允许局域网连接**：在你的代理软件（如 Clash/V2ray/小火箭）设置中，必须打开 **"Allow LAN"** 或 **“允许局域网连接”**。
+- **防火墙放行**：确保 Windows 防火墙没有拦截你的代理软件。
+
+
+#### ② 配置步骤：
+打开你的 **Zsh** 配置文件：`nano ~/.zshrc`（如果你用的是默认 Bash，则打开 `nano ~/.bashrc`），在文件末尾添加以下内容：
+```bash
+# --- WSL 代理配置开始 ---
+
+# 1. 动态获取宿主机的 IP 地址
+# 因为每次重启后宿主机 IP 可能会变，所以需要从 /etc/resolv.conf 自动提取
+export hostip=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')
+
+# 2. 设置代理软件的端口（请根据你软件的设置修改，通常是 7890, 1080, 或 10809）
+export hostport=7890 
+
+# 3. 定义一键开启代理的命令 (alias)
+alias proxy="
+    export https_proxy=http://${hostip}:${hostport};
+    export http_proxy=http://${hostip}:${hostport};
+    export all_proxy=socks5://${hostip}:${hostport};
+    echo '代理已开启：已指向 http://${hostip}:${hostport}'
+"
+
+# 4. 定义一键关闭代理的命令
+alias unproxy="
+    unset https_proxy;
+    unset http_proxy;
+    unset all_proxy;
+    echo '代理已关闭'
+"
+
+# --- WSL 代理配置结束 ---
+```
+
+#### ③ 刷新配置：
+执行 `source ~/.zshrc`。
+
+
+
+#### ④ 手动开关：
+- 需要安装 `uv` 或 `vllm` 时，输入 `proxy`。
+- 不需要时，输入 `unproxy`。
+
+
+代理验证：
+```bash
+# 如果看到一串网页 HTML 代码或成功字样，说明通了
+curl -vv https://www.google.com
+```
+
 ### 4.1 修改软件配置：
 
 我这里使用的是 `V2rayN` 这款代理软件：
