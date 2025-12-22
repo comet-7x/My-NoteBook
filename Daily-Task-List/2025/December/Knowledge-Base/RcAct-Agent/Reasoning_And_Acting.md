@@ -70,7 +70,7 @@ while True:
 
 
 ## 3.对于RcAct的思考
-#### 3.1 谁负责 Observation？它可以是基于工具执行结果的总结吗？
+#### 3.1 谁负责 Observation？它可以是基于工具执行结果的总结吗？如果Observation 太乱太多怎么办？
 ① 在 ReAct 的循环中，存在两个不同的角色：
 - **LLM (推理大脑)：** 负责撰写 **Thought** 和 **Action**。
 - **System/Executor (执行环境)：** 负责运行工具，并将结果填入 **Observation**。
@@ -81,3 +81,9 @@ while True:
 2. **幻觉叠加：** 如果 LLM 在总结工具结果时产生了幻觉（把 100 说成 1000），那么接下来的推理（Thought）就会全盘皆错。
 3. **循环冗余：** 总结本身是一种“思考”行为。在 ReAct 中，**“总结和分析”的任务应该放在下一个 Thought 阶段**。
 
+③ 深入理解Observation：Observation 是 Agent 的“视网膜”。
+- **Thought** 是主观的（我想做什么，我觉得怎么样）。
+- **Action** 是意图（我要去拿那个东西）。
+- **Observation** 是**客观**的（我看到了什么，拿到了什么）。
+如果工具返回的结果太杂乱（比如整个网页的 HTML），直接丢进 Observation 会浪费 Token。
+**精通级做法：** 编写一个专门的 **Output Parser（输出解析器）**。这个解析器不属于 LLM 的逻辑，而是属于代码逻辑。它负责把 HTML 转换成简洁的 Markdown 或 JSON。 这样既保证了信息的**真实性（Observation）**，又保证了 **Thought** 阶段能看懂。
