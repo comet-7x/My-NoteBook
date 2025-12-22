@@ -931,7 +931,7 @@ sudo apt install nautilus -y
 Ubuntu 默认的 `bash` 虽然稳定，但 Tab 补全不够智能。我们换成 `zsh`。
 1. **在 WSL 中安装 Zsh**：
 ```bash
-sudo apt update
+sudo 
 sudo apt install zsh -y
 ```
 
