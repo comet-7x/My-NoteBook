@@ -67,3 +67,17 @@ while True:
     # 5. 将结果拼接回历史上下文，继续循环
     history += f"\n{response}\nObservation: {observation}\n"
 ```
+
+
+## 3.对于RcAct的思考
+#### 3.1 谁负责 Observation？它可以是基于工具执行结果的总结吗？
+① 在 ReAct 的循环中，存在两个不同的角色：
+- **LLM (推理大脑)：** 负责撰写 **Thought** 和 **Action**。
+- **System/Executor (执行环境)：** 负责运行工具，并将结果填入 **Observation**。
+
+② 为什么不能是总结？
+如果 Observation 是 LLM 自己的“总结”，就会产生以下问题：
+1. **信息丢失：** LLM 可能在总结时漏掉看似无关紧要但实际关键的细节。
+2. **幻觉叠加：** 如果 LLM 在总结工具结果时产生了幻觉（把 100 说成 1000），那么接下来的推理（Thought）就会全盘皆错。
+3. **循环冗余：** 总结本身是一种“思考”行为。在 ReAct 中，**“总结和分析”的任务应该放在下一个 Thought 阶段**。
+
