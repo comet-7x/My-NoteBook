@@ -53,7 +53,7 @@ curl --request GET \
 ### 2.请求示例：
 ```bash
 curl --request POST \
-  --url http://localhost:48587/steins/alg/knowledge-agent/summary \
+  --url http://localhost:48585/steins/alg/knowledge-agent/summary \
   --header 'content-type: application/json' \
   --data '{
   "question": "鱿鱼的品种有哪些？",
