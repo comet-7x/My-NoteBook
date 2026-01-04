@@ -10,9 +10,8 @@
 - 完整URL：`http://localhost:48585/steins/alg/knowledge-agent/health`
 
 
-
+### 2.请求示例：
 ```bash
 curl --request GET \
-  --url http://localhost:48585/steins/alg/knowledge-agent/health \
-  --header 'content-type: application/json'
+  --url http://localhost:48587/steins/alg/knowledge-agent/health
 ```
