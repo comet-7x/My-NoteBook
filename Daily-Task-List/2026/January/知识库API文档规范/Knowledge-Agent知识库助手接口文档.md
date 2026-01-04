@@ -38,10 +38,16 @@ curl --request GET \
 - 路径：`/summary`
 - 完成URL：`http://localhost:48585/steins/alg/knowledge-agent/summary`
 - 请求参数：
-
-|     |     |
-| --- | --- |
-|     |     |
+  1. 请求头：无
+  2. 请求体：
+  
+     |      |      |      |
+     | ---- | ---- | ---- |
+     |      |      |      |
+     |      |      |      |
+     |      |      |      |
+  
+     
 
 
 
