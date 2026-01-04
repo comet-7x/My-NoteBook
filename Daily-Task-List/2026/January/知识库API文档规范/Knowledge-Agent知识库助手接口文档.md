@@ -1,25 +1,45 @@
-该文档主要用于介绍知识库Agent所有的接口信息
+# Knowledge Agent 接口文档
 
+本文档详细介绍了 Knowledge-Agent 服务提供的所有 API 接口。
 
-## 一、健康检查接口：
-本接口用于验证**Knowledge-Agent**知识库助手接口是否存在，如果这个接口无法访问，那么说明整个服务不在运行中或者服务挂掉了。
+## 服务信息
 
-### 1.请求信息：
-- 方法：`GET`
-- 路径：`/health`
-- 完整URL：`http://localhost:48585/steins/alg/knowledge-agent/health`
-- 请求参数：无
+- **Base URL**: `http://localhost:48585/steins/alg/knowledge-agent`
+- **版本**: 0.1.0
 
+---
 
-### 2.请求示例：
+## 1. 健康检查 (Health Check)
+
+用于验证服务是否正常运行。
+
+- **接口路径**: `/health`
+- **请求方法**: `GET`
+- **请求参数**: 无
+
+### 响应说明
+
+响应体为 JSON 格式。
+
+| 字段 | 类型 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- |
+| `name` | string | 服务名称 | `"knowledge-agent"` |
+| `status` | string | 服务状态 | `"healthy"` |
+| `version` | string | 服务版本 | `"0.1.0"` |
+| `datetime` | string | 当前服务端时间 | `"2026-01-04 02:31:58 UTC"` |
+
+### 示例
+
+**Request:**
+
 ```bash
 curl --request GET \
-  --url http://localhost:48587/steins/alg/knowledge-agent/health
+  --url http://localhost:48585/steins/alg/knowledge-agent/health
 ```
 
+**Response:**
 
-### 3.响应示例：
-```bash
+```json
 {
   "name": "knowledge-agent",
   "status": "healthy",
@@ -28,61 +48,166 @@ curl --request GET \
 }
 ```
 
+---
 
+## 2. 会话标题总结 (Session Summary)
 
-## 二、会话窗口标题总结接口：
-本接口提供给后端调用，用于总结每次会话窗口的标题，然后发给前端渲染。
+根据用户的问题和模型的回答，生成简短的会话标题。
 
-### 1.请求信息：
-- 方法：`POST`
-- 路径：`/summary`
-- 完成URL：`http://localhost:48585/steins/alg/knowledge-agent/summary`
-- 请求参数：
-  1. 请求头：无
-  2. 请求体：
-  
-     | 请求参数 | 必填 | 类型   | 解释       |
-     | -------- | ---- | ------ | ---------- |
-     | question | 是   | string | 用户的问题 |
-     | answer   | 是   | string | 模型的回答 |
-  
-     
+- **接口路径**: `/summary`
+- **请求方法**: `POST`
+- **Content-Type**: `application/json`
 
+### 请求参数
 
+请求体为 JSON 对象。
 
-### 2.请求示例：
+| 字段 | 类型 | 必填 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `question` | string | 是 | 用户的问题 |
+| `answer` | string | 是 | 模型的回答，默认为空字符串 |
+
+### 响应说明
+
+| 字段 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| `status` | string | 请求状态，`"success"` 或 `"error"` |
+| `data` | string | 生成的标题内容或错误信息 |
+
+### 示例
+
+**Request:**
+
 ```bash
 curl --request POST \
   --url http://localhost:48585/steins/alg/knowledge-agent/summary \
   --header 'content-type: application/json' \
   --data '{
   "question": "鱿鱼的品种有哪些？",
-  "answer": "鱿鱼，又叫柔鱼、枪乌贼，是十腕目枪乌贼科动物。以下是一些常见的鱿鱼品种：\n 1. **中国长枪乌贼**：又叫火箭鱿鱼，俗称大工、大管等。主要渔场在台湾海峡两边的澎湖群岛和闽南海域。其口感肉薄、鲜甜，可用于爆炒或作刺身，也常被晒成长鱿鱼干，是一种名贵的海产味。\n 2. **日本枪乌贼**：也叫一口管、小管等，最大可达 15 厘米，体短而宽。其蛋白质含量较高，脂肪含量较低，营养价值高，一般用于白灼或者油焖，香甜爽口，有弹性。 \n 3. **美洲大赤鱿**：因其深红色的外观而得名，是乌贼类中体型最大的一种，体长可达 1.2 米，体重最高可达 50 公斤。主要分布在太平洋中部至东部海域，尤其是秘鲁和智利沿岸。它是国内许多鱿鱼丝加工厂的首选原料。 \n 4. **阿根廷鱿鱼**：是目前捕捞量较大的一种鱿鱼，也是国内常见的鱿鱼种类之一。其胴体呈圆锥形，肉鳍较短而宽，颜色为棕黄偏白，表皮呈褐色，口感有嚼劲，肉质厚实，味道鲜美，主要分布在西南大西洋的 22°S 至 54°S 区域。 \n 5. **加州鱿鱼**：又称加州笔管，主要产地位于东太平洋，从墨西哥到阿拉斯加的海域，大部分捕捞量来自美国的加利福尼亚州。它一般为小规格鱿鱼，平均体重在 45 至 165 克之间。 \n 6. **北太鱿鱼**：又称北太平洋柔鱼，是西北太平洋海域重要的经济头足类资源之一，主要分布在北太平洋寒暖流交汇的海域。其体型前部为圆筒形，后部逐渐收缩成圆锥形，颜色呈紫红色，肉质较薄，口感略显发面，不太耐嚼。 \n 7. **龙氏桑椹乌贼**：被称为深海鱿鱼，主要生活在亚热带和热带海域，水深可达 700 米 - 900 米，在我国南海和日本群岛南部海域均有分布。它是市场上常见的冰鲜鱿鱼品种，肉质鲜美、口感细腻，是制作刺身的优质原料。 \n 8. **剑尖枪乌贼**：俗名真锁管、透抽等，主要分布在日本青森县以南的海域，以及黄海、东海、南海和菲律宾群岛周边。它是浅海类鱿鱼，常栖息在水深 30 至 170 米的海域，具有较高的经济价值，可鲜销或加工成干制产品。 \n 9. **萤火鱿**：又名萤鱿或萤乌贼，是一种非常小的鱿鱼，通常只有 7.6 厘米长，和其他深海生物一样可以发光，这些光可用来引诱猎物，多分布于日本海及日本四国以北的太平洋沿近海。 \n 10. **火枪乌贼**：也被称为鱿鱼仔，是一种常见的小型沿岸鱿鱼，广泛分布于渤海、黄海、东海、南海以及日本群岛南部的海域。其体表有紫斑，栖息在近海的岛礁周围。"
+  "answer": "鱿鱼，又叫柔鱼、枪乌贼..."
 }'
 ```
 
+**Response:**
 
-
-### 3.响应示例：
-```bash
+```json
 {
   "status": "success",
   "data": "常见鱿鱼品种及其特点总结"
 }
 ```
 
+---
 
-## 三、知识库问答接口：
-本接口用知识库问答，提供快速和思考两种模式，并且支持SSE流式返回数据，同时遵循统一的数据格式。
+## 3. 知识库问答 (Knowledge Base Chat)
 
-### 1.请求信息：
-- 方法：`POST`
-- 路径：`/chat`
-- 完成URL：`http://localhost:48585/steins/alg/knowledge-agent/chat`
+核心问答接口，支持流式返回 (Server-Sent Events, SSE)。支持“思考模式”和“快速模式”。
 
+- **接口路径**: `/chat`
+- **请求方法**: `POST`
+- **Content-Type**: `application/json`
+- **响应类型**: `text/event-stream`
 
-### 2.请求示例：
+### 请求参数
 
+| 字段 | 类型 | 必填 | 默认值 | 说明 |
+| :--- | :--- | :--- | :--- | :--- |
+| `session_id` | string | 是 | - | 会话 ID，由前端创建返回（每个用户的每个会话的独立id） |
+| `message_id` | string | 是 | - | 消息 ID，由前端创建返回（每个用户的每个会话内的每条消息的独立id） |
+| `message` | string | 是 | - | 用户的问题 |
+| `mode` | string | 否 | `"thinking"` | 回答模式。可选值：`"thinking"` (思考模式), `"fast"` (快速模式) |
+| `model` | string | 否 | `"Qwen3-30B-A3B"` | 模型名称 |
+| `tags` | list[str] | 否 | `[]` | 知识库分区内的字段标签 |
+| `partitions` | list[str] | 否 | `null` | 知识库分区名称列表 |
+| `files` | list[str] | 否 | `[]` | 知识库文件 ID 列表 |
+| `top_k` | int | 否 | `10` | 向量数据库查询返回的个数 |
 
+### SSE 响应事件结构
 
-### 3.响应示例：
+接口返回一系列 SSE 事件。每个事件包含 `event` (事件类型) 和 `data` (JSON 数据)。
+
+#### 公共数据字段 (BaseData)
+
+所有事件的 `data` 部分都包含以下字段：
+
+| 字段 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| `message_id` | string | 数据节点的唯一 ID |
+| `time_cost` | int | 消息处理耗时 (毫秒)，目前只有工具调用和结束节点提供该字段的值，其他默认为0 |
+
+#### 事件类型列表
+
+**1. `SEND_CHAT_START`**
+   - **说明**: 对话开始。
+   - **Data**:
+     - `data`: string (固定文本 "the message of {message_id} has started")
+
+**2. `SEND_THOUGHT_CONTENT`**
+   - **说明**: 思考过程内容块 (流式)。
+   - **Data**:
+     - `node_type`: `"thought"`
+     - `node_id`: string (节点 ID)
+     - `data`: string (文本内容块)
+
+**3. `SEND_COMMON_CONTENT`**
+   - **说明**: 普通回答内容块 (流式)。
+   - **Data**:
+     - `node_type`: `"content"`
+     - `node_id`: string (节点 ID)
+     - `data`: string (文本内容块)
+
+**4. `SEND_TOOL_CALL`**
+   - **说明**: 工具调用信息。
+   - **Data**:
+     - `node_type`: `"tool_use"`
+     - `node_id`: string (节点 ID)
+     - `data`: Object (工具调用详情)
+       - `tool_type`: string (工具名称)
+       - `title`: string (展示标题)
+       - `desc`: string (描述)
+       - `tool_result`: Any (工具执行结果)
+
+**5. `SEND_CHAT_END`**
+   - **说明**: 对话结束。
+   - **Data**:
+     - `data`: string (固定文本 "the message of {message_id} has ended")
+
+**6. `SEND_CHAT_ERROR`**
+   - **说明**: 发生错误。
+   - **Data**:
+     - `data`: string (错误信息)
+
+### 示例
+
+**Request:**
+
+```bash
+curl --request POST \
+  --url http://localhost:48585/steins/alg/knowledge-agent/chat \
+  --header 'content-type: application/json' \
+  --data '{
+  "session_id": "sess_12345",
+  "message_id": "msg_67890",
+  "message": "介绍一下 knowledge-agent",
+  "mode": "thinking"
+}'
+```
+
+**Response Stream (示例片段):**
+
+```text
+event: SEND_CHAT_START
+data: {"message_id": "msg_67890", "time_cost": 0, "data": "the message of msg_67890 has started"}
+
+event: SEND_THOUGHT_CONTENT
+data: {"message_id": "msg_67890", "time_cost": 0, "node_type": "thought", "node_id": "node_1", "data": "我需要"}
+
+event: SEND_THOUGHT_CONTENT
+data: {"message_id": "msg_67890", "time_cost": 0, "node_type": "thought", "node_id": "node_1", "data": "查询知识库..."}
+
+event: SEND_COMMON_CONTENT
+data: {"message_id": "msg_67890", "time_cost": 0, "node_type": "content", "node_id": "node_2", "data": "Knowledge-Agent 是..."}
+
+event: SEND_CHAT_END
+data: {"message_id": "msg_67890", "time_cost": 1500, "data": "the message of msg_67890 has ended"}
+```
