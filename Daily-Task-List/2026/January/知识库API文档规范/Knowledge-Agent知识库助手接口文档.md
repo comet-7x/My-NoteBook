@@ -15,3 +15,16 @@
 curl --request GET \
   --url http://localhost:48587/steins/alg/knowledge-agent/health
 ```
+
+
+### 3.响应示例：
+```bash
+{
+  "name": "knowledge-agent",
+  "status": "healthy",
+  "version": "0.1.0",
+  "datetime": "2026-01-04 02:31:58 UTC"
+}
+```
+
+二、会话窗口总结接口
