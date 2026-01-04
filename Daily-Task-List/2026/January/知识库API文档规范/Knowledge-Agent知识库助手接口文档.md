@@ -157,6 +157,7 @@ curl --request POST \
      - `data`: string (文本内容块)
 
 **4. `SEND_TOOL_CALL`**
+
    - **说明**: 工具调用信息。
    - **Data**:
      - `node_type`: `"tool_use"`
@@ -188,7 +189,7 @@ curl --request POST \
   --data '{
   "session_id": "sess_12345",
   "message_id": "msg_67890",
-  "message": "介绍一下 knowledge-agent",
+  "message": "搜索鱿鱼胴体蛋白制备及其应用特性研究",
   "mode": "thinking"
 }'
 ```
@@ -204,6 +205,8 @@ data: {"message_id": "msg_67890", "time_cost": 0, "node_type": "thought", "node_
 
 event: SEND_THOUGHT_CONTENT
 data: {"message_id": "msg_67890", "time_cost": 0, "node_type": "thought", "node_id": "node_1", "data": "查询知识库..."}
+
+
 
 event: SEND_COMMON_CONTENT
 data: {"message_id": "msg_67890", "time_cost": 0, "node_type": "content", "node_id": "node_2", "data": "Knowledge-Agent 是..."}
