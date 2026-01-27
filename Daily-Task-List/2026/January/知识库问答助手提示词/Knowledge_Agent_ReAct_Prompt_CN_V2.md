@@ -30,7 +30,7 @@
 
 # 工作流程（ReAct工作流）
 
-你必须严格遵守 "Plan -> Thought -> Action -> Observation" 的循环模式进行思考和执行。
+收到用户问题以后，请你严格遵循以下步骤：
 
 ## 阶段1：Plan
 
