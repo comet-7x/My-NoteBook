@@ -3,16 +3,16 @@ $tmux$ 的核心操作围绕「会话（Session）」「窗口（Window）」「
 ## 一、会话管理（最核心，对应你之前问的场景）
 会话是 $tmux$ 的最外层容器，一个会话对应一套独立的终端环境。
 
-|功能|完整命令（带全称参数）|缩写命令（带缩写参数）|使用示例|说明|
-|---|---|---|---|---|
-|新建会话|`tmux new --session-name 会话名`|`tmux new -s 会话名`|`tmux new -s dev`（创建名为 dev 的会话）|省略 - s 则生成默认名称（数字）|
-|列出所有会话|`tmux list-sessions`|`tmux ls`|`tmux ls`（查看所有会话）|最常用的会话查看命令|
-|连接 / 附加会话|`tmux attach --target-session 会话名/编号`|`tmux attach -t 会话名/编号`|`tmux attach -t dev`（连接 dev 会话）|恢复后台会话的核心命令|
-|杀死 / 关闭会话|`tmux kill-session --target-session 会话名/编号`|`tmux kill-session -t 会话名`|`tmux kill-session -t dev`（关闭 dev 会话）|仅关闭指定会话|
-|切换会话|`tmux switch --target-session 会话名/编号`|`tmux switch -t test`|`tmux switch -t test`（切到 test 会话）|在已有 tmux 中切换会话|
-|重命名会话|`tmux rename-session --target-session 旧名 新名`|`tmux rename-session -t 旧名 新名`|`tmux rename-session -t dev dev-2`|给会话改名|
-|脱离当前会话（不关闭）|无命令行形式，仅快捷键|`Ctrl+b d`（先按 Ctrl+b，再按 d）|-|会话保留在后台，回到原终端|
-|杀死所有会话|`tmux kill-server`|无缩写|`tmux kill-server`|强制关闭 tmux 所有进程|
+| 功能          | 完整命令（带全称参数）                                  | 缩写命令（带缩写参数）                    | 使用示例                                  | 说明                 |
+| ----------- | -------------------------------------------- | ------------------------------ | ------------------------------------- | ------------------ |
+| 新建会话        | `tmux new --session-name 会话名`                | `tmux new -s 会话名`              | `tmux new -s dev`（创建名为 dev 的会话）       | 省略 - s 则生成默认名称（数字） |
+| 列出所有会话      | `tmux list-sessions`                         | `tmux ls`                      | `tmux ls`（查看所有会话）                     | 最常用的会话查看命令         |
+| 连接 / 附加会话   | `tmux attach --target-session 会话名/编号`        | `tmux attach -t 会话名/编号`        | `tmux attach -t dev`（连接 dev 会话）       | 恢复后台会话的核心命令        |
+| 杀死 / 关闭会话   | `tmux kill-session --target-session 会话名/编号`  | `tmux kill-session -t 会话名`     | `tmux kill-session -t dev`（关闭 dev 会话） | 仅关闭指定会话            |
+| 切换会话        | `tmux switch --target-session 会话名/编号`        | `tmux switch -t test`          | `tmux switch -t test`（切到 test 会话）     | 在已有 tmux 中切换会话     |
+| 重命名会话       | `tmux rename-session --target-session 旧名 新名` | `tmux rename-session -t 旧名 新名` | `tmux rename-session -t dev dev-2`    | 给会话改名              |
+| 脱离当前会话（不关闭） | 无命令行形式，仅快捷键                                  | `Ctrl+b d`（先按 Ctrl+b，再按 d）     | -                                     | 会话保留在后台，回到原终端      |
+| 杀死所有会话      | `tmux kill-server`                           | 无缩写                            | `tmux kill-server`                    | 强制关闭 tmux 所有进程     |
 
 ### 二、窗口管理（一个会话内的多个独立窗口）
 
