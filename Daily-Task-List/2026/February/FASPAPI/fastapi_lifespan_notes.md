@@ -4,7 +4,7 @@
 
 FastAPI 使用 `asynccontextmanager` 来装饰 `lifespan` 函数，是为了提供一个清晰、可靠且结构化的方式来管理应用程序生命周期中的 **“启动”** 和 **“关闭”** 事件。
 
-这个装饰器巧妙地利用了Python的上下文管理器（Context Manager）协议，将其应用于应用的整个生命周期。
+这个*装饰器*巧妙地利用了Python的上下文管理器（Context Manager）协议，将其应用于应用的整个生命周期。
 ==你好==
 ### 工作原理详解
 
