@@ -313,14 +313,14 @@ sudo reboot
 
 无需看原理，直接按顺序复制命令，按输出判断问题：
 
-|执行顺序|命令|核心判断标准||
-|---|---|---|---|
-|1|`nvidia-smi`|确认报错为`Driver/library version mismatch`||
-|2|`which nvidia-smi`|有输出→工具存在；无输出→工具未安装||
-|3|`cat /proc/driver/nvidia/version`|得到内核态 NVRM 版本（唯一可信值）||
-|4|`ldd $(which nvidia-smi)|grep nvml`|有输出→库存在但版本错；无输出→库完全缺失|
-|5|`find /usr -name "libnvidia-nvml.so*" 2>/dev/null`|有输出→库路径错；无输出→库丢失||
-|6|`lspci|grep -i nvidia`|有输出→硬件正常；无输出→硬件故障|
+| 执行顺序 | 命令                                               | 核心判断标准                                |
+| -------- | -------------------------------------------------- | ------------------------------------------- |
+| 1        | `nvidia-smi`                                       | 确认报错为`Driver/library version mismatch` |
+| 2        | `which nvidia-smi`                                 | 有输出→工具存在；无输出→工具未安装          |
+| 3        | `cat /proc/driver/nvidia/version`                  | 得到内核态 NVRM 版本（唯一可信值）          |
+| 4        | `ldd $(which nvidia-smi)|grep nvml`                | 有输出→库存在但版本错；无输出→库完全缺失    |
+| 5        | `find /usr -name "libnvidia-nvml.so*" 2>/dev/null` | 有输出→库路径错；无输出→库丢失              |
+| 6        | `lspci|grep -i nvidia`                             | 有输出→硬件正常；无输出→硬件故障            |
 
 ## 7. 复盘与避坑要点
 
