@@ -52,7 +52,41 @@
 
 #### 流程示意图
 ```mermaid
-graph TD A[用户] --> B{负载均衡器}; B --> C1[无状态 Agent 服务 1]; B --> C2[无状态 Agent 服务 2]; B --> C3[...]; C1 --> D{热数据层 (Redis)}; C2 --> D; C3 --> D; D -- 缓存未命中/异步持久化 --> E[冷数据层 (数据库)]; subgraph "无状态服务集群" C1 C2 C3 end style D fill:#f9f,stroke:#333,stroke-width:2px style E fill:#ccf,stroke:#333,stroke-width:2px
+graph TD
+
+    A[用户] --> B{负载均衡器};
+
+    B --> C1[无状态 Agent 服务 1];
+
+    B --> C2[无状态 Agent 服务 2];
+
+    B --> C3[...];
+
+    C1 --> D{"热数据层 (Redis)"};    %% 加引号
+
+    C2 --> D;
+
+    C3 --> D;
+
+    D -- 缓存未命中/异步持久化 --> E[冷数据层 (数据库)];
+
+  
+
+    subgraph "无状态服务集群"
+
+        C1
+
+        C2
+
+        C3
+
+    end
+
+  
+
+    style D fill:#f9f,stroke:#333,stroke-width:2px
+
+    style E fill:#ccf,stroke:#333,stroke-width:2px
 ```
 
 ## 3. 最终决策与原因
