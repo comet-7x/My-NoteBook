@@ -62,7 +62,7 @@ graph TD
 
     B --> C3[...];
 
-    C1 --> D{"热数据层 (Redis)"};    %% 加引号
+    C1 --> D["热数据层 (Redis)"];
 
     C2 --> D;
 
@@ -87,6 +87,7 @@ graph TD
     style D fill:#f9f,stroke:#333,stroke-width:2px
 
     style E fill:#ccf,stroke:#333,stroke-width:2px
+
 ```
 
 ## 3. 最终决策与原因
