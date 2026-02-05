@@ -5,3 +5,13 @@
 ```plain text
 Crtl + Shift + F
 ```
+
+### 打开/关闭下边栏面板
+```plain text
+Crtl + J
+```
+
+### 新建下边栏面板
+```plain text
+Crtl + Shift + `
+```
