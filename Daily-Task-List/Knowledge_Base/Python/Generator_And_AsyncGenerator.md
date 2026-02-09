@@ -162,3 +162,17 @@ if __name__ == "__main__":
     asyncio.run(test_async_non_streaming_agent())
     asyncio.run(test_async_streaming_agent())
 ```
+
+## 三、关键注意事项
+
+1. 异步生成器调用时**无需提前 await**（`stream_gen = agent.run(...)`），仅在 `async for` 遍历时处理异步逻辑；
+2. 若需让异步生成器接收外部输入，需将 `SendType` 从 `None` 改为对应类型（如 `str`），并通过 `agen.asend(xxx)` 发送值；
+3. 实际业务中，`sleep`/`asyncio.sleep` 可替换为真实的 LLM 接口调用、数据库查询等 IO 操作。
+
+---
+
+## 总结
+
+1. `Generator` 有 3 个类型参数（产出 / 接收 / 返回值），`AsyncGenerator` 仅 2 个（产出 / 接收值），核心差异是异步生成器省略了返回值类型；
+2. 生成器函数只要含 `yield` 就返回生成器对象，需通过内部函数抽离逻辑实现 “普通对象 / 生成器” 分支返回；
+3. 同步 / 异步生成器的核心差异在定义（`async def`）、遍历（`async for`）和运行方式（`asyncio.run`），核心的产出 / 接收值逻辑一致。
