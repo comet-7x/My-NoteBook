@@ -169,10 +169,81 @@ if __name__ == "__main__":
 2. 若需让异步生成器接收外部输入，需将 `SendType` 从 `None` 改为对应类型（如 `str`），并通过 `agen.asend(xxx)` 发送值；
 3. 实际业务中，`sleep`/`asyncio.sleep` 可替换为真实的 LLM 接口调用、数据库查询等 IO 操作。
 
----
+## 四、闭包函数的必要性（核心疑问解答）
 
-## 总结
+### 1. 核心原因：Python 生成器函数的判定规则
+
+Python 判定 “函数是否为生成器函数” 的规则：
+
+> **只要函数体包含 `yield` 关键字（无论是否执行到），该函数就会被标记为生成器函数，调用后必返回生成器对象**。
+
+若直接在 `run` 方法中写 `yield`（不使用闭包），即使 `yield` 仅在 `stream=True` 分支，`run` 也会被判定为生成器函数：
+
+- 调用 `run(..., stream=False)` 时，返回的是**空生成器对象**（而非预期的 `ChatAgentResponse`）；
+- `return` 的值会被包装在 `StopIteration` 异常中，需捕获异常才能获取，完全违背 “非流式直接返回普通对象” 的需求。
+
+### 2. 反面例子（不使用闭包的问题）
+
+```python
+# 反面例子：直接在 run 中写 yield，导致非流式返回异常
+class BadChatAgent:
+    def run(
+        self,
+        message: str,
+        stream: bool = False,
+    ) -> ChatAgentResponse | Generator[StreamingChatAgentResponse, None, None]:
+        if not stream:
+            return ChatAgentResponse(f"同步非流式：{message}")  # 无法直接返回
+        else:
+            for chunk in ["同", "步", "流", "式"]:
+                sleep(0.5)
+                yield StreamingChatAgentResponse(chunk)
+
+# 测试：非流式调用返回生成器，而非普通对象
+bad_agent = BadChatAgent()
+res = bad_agent.run("测试", stream=False)
+print(type(res))  # 输出：<class 'generator'>（预期是 ChatAgentResponse）
+# 需捕获异常才能拿到 return 的值（反直觉）
+try:
+    next(res)
+except StopIteration as e:
+    print(e.value.content)  # 才能拿到 "同步非流式：测试"
+```
+
+### 3. 闭包的核心作用
+
+- **隔离生成器判定**：闭包（内部函数）封装 `yield` 逻辑，主函数 `run` 无 `yield`，因此是普通函数，可正常返回 `ChatAgentResponse`；
+- **自动捕获变量**：闭包可直接使用外部 `run` 方法的 `message`、`self` 等变量，无需手动传参，代码更简洁；
+- **逻辑内聚**：流式逻辑和 `run` 方法的分支逻辑紧耦合，可读性更高。
+
+### 4. 替代方案（非闭包实现）
+
+闭包不是唯一方案，也可将流式逻辑写成类的独立方法，但代码更繁琐：
+
+```python
+# 替代方案：独立方法（无闭包）
+class ChatAgent:
+    def run(
+        self,
+        message: str,
+        stream: bool = False,
+    ) -> ChatAgentResponse | Generator[StreamingChatAgentResponse, None, None]:
+        if not stream:
+            return ChatAgentResponse(f"同步非流式：{message}")
+        else:
+            return self._stream_generator(message)  # 调用独立方法
+    
+    # 独立生成器方法（需手动传参）
+    def _stream_generator(self, message: str):
+        for chunk in ["同", "步", "流", "式"]:
+            sleep(0.5)
+            yield StreamingChatAgentResponse(chunk)
+```
+
+
+## 五、总结
 
 1. `Generator` 有 3 个类型参数（产出 / 接收 / 返回值），`AsyncGenerator` 仅 2 个（产出 / 接收值），核心差异是异步生成器省略了返回值类型；
-2. 生成器函数只要含 `yield` 就返回生成器对象，需通过内部函数抽离逻辑实现 “普通对象 / 生成器” 分支返回；
-3. 同步 / 异步生成器的核心差异在定义（`async def`）、遍历（`async for`）和运行方式（`asyncio.run`），核心的产出 / 接收值逻辑一致。
+2. 生成器函数只要含 `yield` 就返回生成器对象，需通过内部闭包函数抽离逻辑，实现 “普通对象 / 生成器” 分支返回；
+3. 同步 / 异步生成器的核心差异在定义（`async def`）、遍历（`async for`）和运行方式（`asyncio.run`），核心的产出 / 接收值逻辑一致；
+4. 闭包的核心作用是隔离生成器判定，让主函数保持 “普通函数” 身份，是实现分支返回的最优工程方案（替代方案更繁琐）。
