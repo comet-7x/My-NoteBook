@@ -16,6 +16,3 @@ Tokenization is at the heart of much weirdness of LLMs. Do not brush it off.
 在线可视化观察不同分词模型：
 > [Tiktokenizer](https://tiktokenizer.vercel.app/) 
 
-⚠️upload failed, check dev console
-
-
