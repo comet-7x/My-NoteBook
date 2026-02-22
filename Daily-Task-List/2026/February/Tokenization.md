@@ -12,3 +12,6 @@ Tokenization is at the heart of much weirdness of LLMs. Do not brush it off.
 - Why is LLM not actually end-to-end language modeling? **Tokenization**.
 - What is the real root of suffering? **Tokenization**.
 
+
+在线可视化观察不同分词模型：
+> [Tiktokenizer](https://tiktokenizer.vercel.app/) 
