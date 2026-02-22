@@ -16,3 +16,28 @@ Tokenization is at the heart of much weirdness of LLMs. Do not brush it off.
 在线可视化观察不同分词模型：
 > [Tiktokenizer](https://tiktokenizer.vercel.app/) 
 
+```
+Tokenization is at the heart of much weirdness of LlMs. Donot brush it off.
+
+127 + 677 = 804
+1275 +6773 =8041
+
+Egg.
+I have an Egg.egg.
+EGG.
+
+"AI技术的发展正在改变世界 (Innovation drives progress). "
+"今日、私たちは未来の扉を開いています。 "
+"인공지능은 언어의 장벽을 허물 수 있을까요? "
+"繁體中文的測試也是必不可少的。" 
+
+for i in range(1, 101):
+	if i % 3 == 0 and i % 5 == 0:
+		print("FizzBuzz")
+	elif i % 3 == 0:
+		print("fizz")
+	elif i % 5 == 0:
+		print("Buzz")
+	else:
+		print(i)
+```
