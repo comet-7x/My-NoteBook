@@ -23,7 +23,8 @@ Tokenization is at the heart of much weirdness of LlMs. Donot brush it off.
 1275 +6773 =8041
 
 Egg.
-I have an Egg.egg.
+I have an Egg.
+egg.
 EGG.
 
 "AI技术的发展正在改变世界 (Innovation drives progress). "
