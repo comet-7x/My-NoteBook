@@ -27,10 +27,10 @@ I have an Egg.
 egg.
 EGG.
 
-"AI技术的发展正在改变世界 (Innovation drives progress). "
-"今日、私たちは未来の扉を開いています。 "
-"인공지능은 언어의 장벽을 허물 수 있을까요? "
-"繁體中文的測試也是必不可少的。" 
+"AI技术的发展正在改变世界。"
+"The development of AI technology is changing the world."
+"AI技術の発展が世界を変えています."
+"AI 기술의 발전이 세상을 바꾸고 있습니다." 
 
 for i in range(1, 101):
 	if i % 3 == 0 and i % 5 == 0:
