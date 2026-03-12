@@ -19,7 +19,7 @@
 
 打开 PowerShell 或 CMD，输入以下命令：
 
-```bash
+```Bash
 ssh-keygen -t ed25519 -f "$HOME\.ssh\id_ed25519_remote"
 ```
 
@@ -38,9 +38,7 @@ ssh-keygen -t ed25519 -f "$HOME\.ssh\id_ed25519_remote"
 
 在 Windows PowerShell 执行：
 
-PowerShell
-
-```
+```PowerShell
 $pubKey = Get-Content "$HOME\.ssh\id_ed25519_remote.pub"
 ssh user@remote_host "mkdir -p ~/.ssh && echo '$pubKey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
 ```
@@ -51,9 +49,7 @@ ssh user@remote_host "mkdir -p ~/.ssh && echo '$pubKey' >> ~/.ssh/authorized_key
     
 2. 登录 Linux 服务器，执行：
     
-    Bash
-    
-    ```
+    ```Bash
     nano ~/.ssh/authorized_keys
     ```
     
@@ -64,9 +60,9 @@ ssh user@remote_host "mkdir -p ~/.ssh && echo '$pubKey' >> ~/.ssh/authorized_key
 
 为了避免每次输入长 IP 地址和指定私钥路径，修改 Windows 本地的 `C:\Users\用户名\.ssh\config` 文件：
 
-Plaintext
 
-```
+
+```Plaintext
 Host my_server
     HostName 1.2.3.4          # 服务器 IP
     User root                 # 登录用户名
@@ -77,9 +73,9 @@ Host my_server
 
 完成上述配置后，你只需在终端输入以下命令即可秒连：
 
-Bash
 
-```
+
+```Bash
 ssh my_server
 ```
 
@@ -95,5 +91,3 @@ ssh my_server
     
 
 ---
-
-**需要我为你补充如何在 VS Code 中进一步优化远程开发环境（如插件配置或本地代理设置）吗？**
