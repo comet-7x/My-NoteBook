@@ -3,4 +3,5 @@
 
 .obsidian/workspace-mobile.json
 
-.obsidian/plugins/*
+.obsidian/plugins/
+.obsidian/themes/
