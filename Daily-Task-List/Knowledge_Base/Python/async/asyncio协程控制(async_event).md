@@ -108,11 +108,7 @@ asyncio.run(main())
 
 直接调用 `task.cancel()`，强制终止协程，配合异常捕获：
 
-python
-
-运行
-
-```
+```python
 import asyncio
 
 async def long_task():
@@ -141,11 +137,7 @@ asyncio.run(main())
 
 封装为**类**，实现：**启动、暂停、停止、运行状态判断**，完美适配你的项目：
 
-python
-
-运行
-
-```
+```python
 import asyncio
 
 class TaskController:
