@@ -214,11 +214,7 @@ asyncio.run(main())
 
 防止协程无限等待信号，增加**超时控制**：
 
-python
-
-运行
-
-```
+```python
 import asyncio
 
 async def wait_with_timeout(event: asyncio.Event, timeout: int):
