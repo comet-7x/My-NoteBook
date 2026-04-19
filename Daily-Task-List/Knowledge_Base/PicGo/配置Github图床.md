@@ -27,7 +27,23 @@
 
 
 ## PicGo配置
+### 下载  PicGo
+
+官网：[https://molunerfinn.com/PicGo/](https://molunerfinn.com/PicGo/)
+
+
 ###  配置图床
 - 点击打开图床设置
 - 打开Github，点击 "+" 选择新建
 ![image.png](https://cdn.statically.io/gh/comet-7x/My-NoteBook/main/images/202604191542142.png)
+
+```markdown
+图床配置名：任意取名即可（我这里直接命名为Github）
+设定仓库名：你的Github用户名/仓库名字
+设定分支名：main
+设定Token：你刚才复制的 token
+设置存储路径：images/
+设置自定义域名：https://cdn.statically.io/gh/你的Github用户名/仓库名字/分支
+```
+可以参考我的设置：
+![image.png](https://cdn.statically.io/gh/comet-7x/My-NoteBook/main/images/202604191556888.png)
