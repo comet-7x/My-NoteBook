@@ -30,6 +30,4 @@
 ###  配置图床
 - 点击打开图床设置
 - 打开Github，点击 "+" 选择新建
-![image.png|700](https://github.com/comet-7x/My-NoteBook/main/images/202604191529451.png)
-
-
+![image.png](https://cdn.statically.io/gh/comet-7x/My-NoteBook/main/images/202604191542142.png)
