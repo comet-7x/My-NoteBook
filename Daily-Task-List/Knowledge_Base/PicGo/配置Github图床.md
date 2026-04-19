@@ -1,7 +1,9 @@
 >图床，顾名思义，就是存储图片的“床”。它是一种在线服务，允许用户上传、存储和分享图片。通过图床，用户可以将图片上传到云端，然后获得一个链接，可以在任何地方分享这个链接，而不需要担心图片的存储和带宽问题。
 
 
+
 ## GitHub配置
+
 ### 创建 GitHub 仓库
 
 - 登录 GitHub
@@ -25,8 +27,10 @@
 >- 如果你怀疑令牌的安全性受到了威胁，应立即在 GitHub 设置中撤销该令牌。
 >- 通过GitHub 令牌能够用于执行与你的 GitHub 账户相关的各种操作，因此请谨慎选择令牌的权限。
 
+---
 
 ## PicGo配置
+
 ### 下载  PicGo
 
 官网：[https://molunerfinn.com/PicGo/](https://molunerfinn.com/PicGo/)
@@ -35,6 +39,7 @@
 ###  配置图床
 - 点击打开图床设置
 - 打开Github，点击 "+" 选择新建
+
 ![image.png](https://cdn.statically.io/gh/comet-7x/My-NoteBook/main/images/202604191542142.png)
 
 ```markdown
@@ -48,3 +53,12 @@
 可以参考我的设置：
 ![image.png](https://cdn.statically.io/gh/comet-7x/My-NoteBook/main/images/202604191556888.png)
 
+---
+
+## Typora配置
+
+### 配置图床
+- 点击文件 -> 点击偏好设置 -> 点击图像
+- 选择上传服务为PicGo（app）
+- 选择PicGo路径为本地的安装路径
+![image.png](https://cdn.statically.io/gh/comet-7x/My-NoteBook/main/images/202604191602929.png)
