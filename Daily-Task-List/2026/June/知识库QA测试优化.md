@@ -55,7 +55,21 @@ Milvus存储内容如下：
 这一页的内容为：
 ![image-20260618235830591](https://cdn.statically.io/gh/comet-7x/My-NoteBook/main/images/202606182358786.png)
 
-问题出现在我们对于图片的描述，我们在使用VLM进行描述图片时使用的提示词为：
+问题出现在我们对于图片的描述，我们在使用VLM进行描述图片时使用的提示词为："简要完整地描述这张图片的内容"。导致遗失了很多信息，相关代码为：
+
+`steins_ai/engines/rag/parser.py`
+
+```python
+messages = [
+    BaseMessage.make_user_message(
+        role_name="user",
+        content="简要完整地描述这张图片的内容",
+        image_list=[Image.open(io.BytesIO(image_bytes))],
+    ).to_openai_message(OpenAIBackendRole.USER)
+]
+
+image_description_text = await vlm(messages)
+```
 
 Q29：2023年海水养殖甲壳类产量与淡水养殖甲壳类产量相差多少？
 
