@@ -59,4 +59,83 @@ Document（文档根节点，最顶层）
 这就是 DOM 树，**内存里的对象树**，JS 能直接读写每一个节点。
 
 
-### 为什么一定要有 DOM 树？
+### 四、为什么一定要有 DOM 树？
+
+#### 1. HTML 文本不可操作，DOM 对象可编程：
+
+HTML 只是静态文字；DOM 是**JS 可访问的对象**。
+
+举例：想修改 div 文字
+
+- 直接改 HTML 字符串：要匹配截取、拼接，极其麻烦
+- 操作 DOM：`document.querySelector('div').innerText = '新文字'`
+    
+    DOM 树提供一套标准 API，任意增删改查页面结构。
+
+### 2. 树形结构天然匹配 HTML 嵌套语法
+
+HTML 本身就是层层嵌套，树结构完美对应层级：
+
+- 查找父 / 子 / 兄弟元素逻辑清晰
+- 批量遍历页面所有标签（循环子节点）非常方便
+
+### 3. 浏览器渲染的中间桥梁
+
+完整渲染流程：
+
+1. 下载 HTML 字符串
+2. 解析生成 **DOM 树**
+3. 同时解析 CSS 生成 CSSOM 样式树
+4. DOM + CSSOM 合并生成 **渲染树 Render Tree**
+5. 布局 Layout → 绘制 Paint → 合成 Composite
+
+没有 DOM 树，浏览器无法计算每个元素的样式、位置、大小。
+
+## 五、举前端开发日常场景，直观感受 DOM 树
+
+### 场景 1：获取链接、批量修改（对应你刚才 Excel 批量链接需求）
+
+页面一堆 `<a href="url">`，想批量读取所有链接地址：
+
+js
+
+运行
+
+```
+// 获取DOM树上所有a元素节点
+const aList = document.querySelectorAll('a')
+aList.forEach(a => {
+  console.log(a.href) // 读取DOM节点的href属性
+  a.style.color = 'red' // 修改DOM节点样式
+})
+```
+
+底层就是在遍历 DOM 树的子节点。
+
+### 场景 2：动态新增页面元素
+
+js
+
+运行
+
+```
+// 在DOM树上创建新节点
+const div = document.createElement('div')
+div.textContent = '新增内容'
+// 挂载到DOM树body下（添加子节点）
+document.body.appendChild(div)
+```
+
+`createElement` 是在内存创建 DOM 节点，`appendChild` 是把节点插入 DOM 树，页面才会渲染出来；只创建不挂载树上，页面看不见。
+
+### 场景 3：删除元素
+
+js
+
+运行
+
+```
+document.querySelector('.box').remove()
+```
+
+本质：从 DOM 树中移除该节点及其所有后代子树。
