@@ -126,3 +126,12 @@ document.querySelector('.box').remove()
 ```
 
 本质：从 DOM 树中移除该节点及其所有后代子树。
+
+
+### 关于DOM的误区
+- VS Code 只管**写代码**，没有浏览器内核，不存在 DOM 树，没法实际操作 DOM；
+- 浏览器打开页面后才会生成 DOM，你在 VS Code 写的 DOM 操作 JS，到浏览器才会生效；
+- Console 只是浏览器自带的调试控制台，用来临时手动操作 DOM，和业务代码分离。
+
+
+## HTML标签速览
