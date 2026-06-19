@@ -93,15 +93,11 @@ HTML 本身就是层层嵌套，树结构完美对应层级：
 
 ### 举前端开发日常场景，直观感受 DOM 树
 
-### 场景 1：获取链接、批量修改（对应你刚才 Excel 批量链接需求）
+#### 场景 1：获取链接、批量修改（对应你刚才 Excel 批量链接需求）
 
 页面一堆 `<a href="url">`，想批量读取所有链接地址：
 
-js
-
-运行
-
-```
+```js
 // 获取DOM树上所有a元素节点
 const aList = document.querySelectorAll('a')
 aList.forEach(a => {
@@ -112,13 +108,9 @@ aList.forEach(a => {
 
 底层就是在遍历 DOM 树的子节点。
 
-### 场景 2：动态新增页面元素
+#### 场景 2：动态新增页面元素
 
-js
-
-运行
-
-```
+```js
 // 在DOM树上创建新节点
 const div = document.createElement('div')
 div.textContent = '新增内容'
@@ -128,9 +120,9 @@ document.body.appendChild(div)
 
 `createElement` 是在内存创建 DOM 节点，`appendChild` 是把节点插入 DOM 树，页面才会渲染出来；只创建不挂载树上，页面看不见。
 
-### 场景 3：删除元素
+#### 场景 3：删除元素
 
-js
+
 
 运行
 
