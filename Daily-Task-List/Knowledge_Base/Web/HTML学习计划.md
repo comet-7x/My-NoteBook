@@ -121,12 +121,7 @@ document.body.appendChild(div)
 `createElement` 是在内存创建 DOM 节点，`appendChild` 是把节点插入 DOM 树，页面才会渲染出来；只创建不挂载树上，页面看不见。
 
 #### 场景 3：删除元素
-
-
-
-运行
-
-```
+```js
 document.querySelector('.box').remove()
 ```
 
