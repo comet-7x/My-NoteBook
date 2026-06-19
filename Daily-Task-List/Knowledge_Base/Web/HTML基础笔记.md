@@ -1,3 +1,43 @@
+>定位：HTML 只负责**结构 / 内容**（有哪些东西），不负责长什么样（CSS）和点了会怎样（JS）。 这三者分工是整个前端的地基，先记牢。
+>- HTML：内容
+> - CSS：样式
+>  - JS：交互
+
+## 一、文档骨架（房子的地基）
+```html
+<!DOCTYPE html>           <!-- 声明这是 HTML5 现代网页 -->
+<html lang="zh-CN">       <!-- 根标签；lang 告诉浏览器/翻译/读屏软件这是中文 -->
+  <head>                  <!-- 幕后大脑：给浏览器看的元信息，不直接显示 -->
+    <meta charset="UTF-8">                                    <!-- 字符编码，防中文乱码 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移动端适配开关 -->
+    <title>页面标题</title>                                    <!-- 标签页上的名字 -->
+    <link rel="stylesheet" href="css/style.css">             <!-- 外挂 CSS 样式表 -->
+  </head>
+  <body>                  <!-- 台前舞台：所有用户能看到的内容 -->
+    ...
+  </body>
+</html>
+```
+
+**`<head>` 里几乎每页都该有的四件套**）：
+
+|标签|作用|漏了会怎样|
+|---|---|---|
+|`<meta charset="UTF-8">`|字符编码|中文乱码|
+|`<meta name="viewport">`|按设备宽度渲染|手机上页面缩成一团、响应式失效|
+|`<title>`|标签页标题|标签页显示一串路径，对 SEO 不友好|
+|`<link>`|引入 CSS / 图标|页面没样式|
+
+## 二、标签速览
+**英文对照（理解记忆，不用背）：** `p`=Paragraph 段落 · `h1`=Heading 标题 · `div`=Division 区块 · `ul`=Unordered List 无序列表 · `li`=List Item 列表项 · `img`=Image 图片 · `a`=Anchor 超链接 · `nav`=Navigation 导航 · `section`=区块 · `article`=独立内容单元
+
+**双标签 vs 单标签（空元素）** —— 你提到了 img/input 是单标签，这里把规律点明：
+
+- **双标签**：有开有合，里面能放内容。`<p>...</p>`、`<div>...</div>`、`<a>...</a>`。
+- **单标签（空元素 void elements）**：没有结束标签、不能包内容。常见就这几个： `<meta>` `<link>` `<img>` `<input>` `<br>`（换行）`<hr>`（分割线）。
+
+
+
 ## HTML结构速览
 - **文档声明** (`<!DOCTYPE html>`)：告诉浏览器这是一个现代的 HTML5 网页。
 - `<html>`（树根）
