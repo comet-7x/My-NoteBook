@@ -186,14 +186,16 @@
 3. **语义化标签**：nav/article/section/header/footer/aside 替代纯 div，利于 SEO （Search Engine Optimization，搜索引擎优化）与可读性。
 4. `<main>` 是 HTML5 核心语义标签，**一个页面只能出现一次**，代表页面核心正文，区分 header/aside/footer 辅助区域；
 
-## 三、块级元素与行内元素
+## 三、块级 / 行内 / 行内块元素
 每个元素默认要么「块级」要么「行内」，决定了它怎么占位：
 
-||块级元素 (block)|行内元素 (inline)|
-|---|---|---|
-|占位|**独占一行**，从上往下排|不换行，**并排**排列|
-|宽高|可设 `width`/`height`|设宽高**通常无效**，由内容撑开|
-|例子|`div` `p` `h1` `ul` `li` `header` `section`|`span` `a` `strong` `em`|
+|对比项|块级元素 block|行内元素 inline|行内块 inline-block|
+|---|---|---|---|
+|换行规则|独占一整行，自动前后换行|同行并排，不自动换行|同行并排，不自动换行|
+|宽高设置|width、height 完全生效|宽高设置无效，大小由文字内容撑开|width、height 完全生效|
+|内外边距|margin、padding 上下左右全部正常生效|水平方向 margin/padding 生效；垂直方向视觉不撑开布局|margin、padding 上下左右全部正常生效|
+|对齐方式|默认左对齐，独占一行|文字基线对齐（底部对齐）|和文字基线对齐，可并排且有盒子尺寸|
+|典型标签示例|div、p、h1~h6、ul、li、section、main、header、footer、nav、article|span、a、strong、em、u、s、cite、code|img、input、button、textarea、select|
 
 > 特例：`<img>`、`<input>` 是「可替换元素」，虽是行内但**可以设宽高**。 进阶：这套默认行为以后能用 CSS 的 `display`（`block`/`inline`/`inline-block`/`flex`/`grid`）随意改——这是第 3 阶段布局的核心开关。
 
