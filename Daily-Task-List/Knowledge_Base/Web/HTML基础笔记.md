@@ -167,7 +167,7 @@
 补充区分小总结：
 1. **单标签（空元素，无闭合、不能包裹内容）**：`meta` `link` `img` `input` `br` `hr` `source` `wbr`
 2. **双标签**：其余全部标签，均可包裹文字、子标签；
-3. **语义化标签**：nav/article/section/header/footer/aside 替代纯 div，利于 SEO 与可读性。
+3. **语义化标签**：nav/article/section/header/footer/aside 替代纯 div，利于 SEO （Search Engine Optimization，搜索引擎优化）与可读性。
 4. `<main>` 是 HTML5 核心语义标签，**一个页面只能出现一次**，代表页面核心正文，区分 header/aside/footer 辅助区域；
 
 
