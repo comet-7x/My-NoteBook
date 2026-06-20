@@ -186,16 +186,13 @@
 3. **语义化标签**：nav/article/section/header/footer/aside 替代纯 div，利于 SEO （Search Engine Optimization，搜索引擎优化）与可读性。
 4. `<main>` 是 HTML5 核心语义标签，**一个页面只能出现一次**，代表页面核心正文，区分 header/aside/footer 辅助区域；
 
-## 三、块级 / 行内 / 行内块元素
+## 三、块级元素与行内元素
 每个元素默认要么「块级」要么「行内」，决定了它怎么占位：
-
-|对比项|块级元素 block|行内元素 inline|行内块 inline-block|
-|---|---|---|---|
-|换行规则|独占一整行，自动前后换行|同行并排，不自动换行|同行并排，不自动换行|
-|宽高设置|width、height 完全生效|宽高设置无效，大小由文字内容撑开|width、height 完全生效|
-|内外边距|margin、padding 上下左右全部正常生效|水平方向 margin/padding 生效；垂直方向视觉不撑开布局|margin、padding 上下左右全部正常生效|
-|对齐方式|默认左对齐，独占一行|文字基线对齐（底部对齐）|和文字基线对齐，可并排且有盒子尺寸|
-|典型标签示例|div、p、h1~h6、ul、li、section、main、header、footer、nav、article|span、a、strong、em、u、s、cite、code|img、input、button、textarea、select|
+||块级元素 (block)|行内元素 (inline)|
+|---|---|---|
+|占位|**独占一行**，从上往下排|不换行，**并排**排列|
+|宽高|可设 `width`/`height`|设宽高**通常无效**，由内容撑开|
+|例子|`div` `p` `h1` `ul` `li` `header` `section`|`span` `a` `strong` `em`|
 
 > 特例：`<img>`、`<input>` 是「可替换元素」，虽是行内但**可以设宽高**。 进阶：这套默认行为以后能用 CSS 的 `display`（`block`/`inline`/`inline-block`/`flex`/`grid`）随意改——这是第 3 阶段布局的核心开关。
 
@@ -300,13 +297,14 @@ document.querySelector('.box').remove();
 
 ## 十、一页速记 / 自测清单
 学完 HTML，你应该能不看资料回答：
-- [ ]  HTML / CSS / JS 各负责什么？
-- [ ]  `<head>` 里必备哪四样？少了 viewport 会怎样？
-- [ ]  块级和行内元素的三点区别？
-- [ ]  `id` 和 `class` 什么时候用哪个？
-- [ ]  哪些是单标签（空元素）？
-- [ ]  HTML 源码和 DOM 树是什么关系？为什么需要 DOM？
-- [ ]  浏览器从字符串到画面，中间经过哪几步？
+- [ ] HTML / CSS / JS 在网页开发中分别扮演什么角色？
+- [ ] `<head>` 里的“四件套”是什么？如果漏掉 `viewport`，在手机上访问会发生什么？
+- [ ] 块级元素、行内元素、行内块元素（可替换元素）在布局和宽高上有何区别？
+- [ ] 为什么 `<p>` 标签里不能嵌套 `<div>`？如果嵌套了会怎么样？
+- [ ] 在 `<form>` 表单里写一个点击触发 JS 函数的普通按钮，需要注意什么属性？（提示：`type="button"`）
+- [ ] 超链接 `<a>` 在新窗口打开时，如何防止安全漏洞？（提示：`rel="noopener"`）
+- [ ] HTML 源码文本和浏览器内存中的 DOM 树有什么区别？为什么 JS 必须操作 DOM 树而不是源码？
+- [ ] 为什么建议把 `<script>` 标签写在 `</body>` 前面，或者加上 `defer` 属性？
 
 
 
