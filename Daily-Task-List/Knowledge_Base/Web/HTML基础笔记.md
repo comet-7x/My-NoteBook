@@ -6,9 +6,10 @@
 ## 一、文档骨架（房子的地基）
 ```html
 <!DOCTYPE html>           <!-- 声明这是 HTML5 现代网页 -->
-<html lang="zh-CN">       <!-- 根标签；lang 告诉浏览器/翻译/读屏软件这是中文 -->
+<html lang="zh-CN">       <!-- 根标签；lang 告诉浏览器/翻译/读屏软件这是中文，如果网页主要针对国内市场用 `zh-CN`。如果是跨境电商或国际化项目，需要改为 `en`。 -->
   <head>                  <!-- 幕后大脑：给浏览器看的元信息，不直接显示 -->
     <meta charset="UTF-8">                                    <!-- 字符编码，防中文乱码 -->
+    <!-- `width=device-width`（宽度等于设备宽）、`initial-scale=1.0`（初始缩放比例 1:1，禁止缩放） -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移动端适配开关 -->
     <title>页面标题</title>                                    <!-- 标签页上的名字 -->
     <link rel="stylesheet" href="css/style.css">             <!-- 外挂 CSS 样式表 -->
@@ -214,7 +215,7 @@
 - **一个 `<h1>`、一个 `<main>`** 是推荐的最佳实践。
 
 
-## HTML 源码 与 DOM 树的区别
+## 六、HTML 源码 与 DOM 树的区别
 我们写的 HTML 只是**纯文本字符串**，浏览器加载时会把它**解析成一棵内存里的树形对象结构**，这就是 **DOM（Document Object Model）树**。
 源码：
 ```html
@@ -279,7 +280,7 @@ document.querySelector('.box').remove();
 - **浏览器打开页面后才生成 DOM**；你写的 DOM 操作 JS，到浏览器里才生效。
 - **Console** 是浏览器的调试控制台，用来临时手动操作 DOM，和业务代码分离。
 
-## 一页速记 / 自测清单
+## 十、一页速记 / 自测清单
 学完 HTML，你应该能不看资料回答：
 - [ ]  HTML / CSS / JS 各负责什么？
 - [ ]  `<head>` 里必备哪四样？少了 viewport 会怎样？
