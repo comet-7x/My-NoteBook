@@ -170,9 +170,41 @@
 3. **语义化标签**：nav/article/section/header/footer/aside 替代纯 div，利于 SEO （Search Engine Optimization，搜索引擎优化）与可读性。
 4. `<main>` 是 HTML5 核心语义标签，**一个页面只能出现一次**，代表页面核心正文，区分 header/aside/footer 辅助区域；
 
+## 三、块级元素与行内元素
+每个元素默认要么「块级」要么「行内」，决定了它怎么占位：
+
+||块级元素 (block)|行内元素 (inline)|
+|---|---|---|
+|占位|**独占一行**，从上往下排|不换行，**并排**排列|
+|宽高|可设 `width`/`height`|设宽高**通常无效**，由内容撑开|
+|例子|`div` `p` `h1` `ul` `li` `header` `section`|`span` `a` `strong` `em`|
+
+> 特例：`<img>`、`<input>` 是「可替换元素」，虽是行内但**可以设宽高**。 进阶：这套默认行为以后能用 CSS 的 `display`（`block`/`inline`/`inline-block`/`flex`/`grid`）随意改——这是第 3 阶段布局的核心开关。
 
 
 
+## 四、属性系统
+通用写法：`<标签 属性名="值" 属性名="值">`。属性是给标签附加的「配置」。
+
+**全局属性（几乎所有标签都能用）：**
+
+- `class="..."`：**可重复**，给「一类」元素贴标签，供 CSS/JS 批量选中。
+- `id="..."`：**页面内唯一**，像主键，用来精确定位单个元素。
+- `style="..."`：行内样式，**能不用就不用**（样式应交给 CSS 文件）。
+
+**`id` vs `class`（关键区别）：**
+
+- `id` 唯一 → 一个页面里 `id="lightbox"` 只能有一个 → 对应 JS 的 `getElementById`。
+- `class` 可重复 → 一堆卡片都能 `class="cat-card"` → 对应 `querySelectorAll('.cat-card')`。
+
+**常见专用属性：** `href`(a) · `src`/`alt`(img) · `type`(input) · `lang`(html)。
+
+**相对路径（写 `href`/`src` 必懂）：**
+
+- `images/cat.svg`：相对**当前 HTML 文件**所在目录找。
+- `./` 当前目录 · `../` 上一级目录 · `/` 网站根目录。
+- `https://...`：绝对路径（外部资源）。
+- 你项目里 `src="images/logo.svg"` 就是相对路径，所以图片文件夹必须跟 HTML 在对的相对位置。
 
 ## HTML结构速览
 - **文档声明** (`<!DOCTYPE html>`)：告诉浏览器这是一个现代的 HTML5 网页。
