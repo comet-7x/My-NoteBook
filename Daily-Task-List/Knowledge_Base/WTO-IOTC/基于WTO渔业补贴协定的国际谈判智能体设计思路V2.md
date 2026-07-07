@@ -1,5 +1,3 @@
-# 基于 WTO 渔业补贴协定的国际谈判智能体设计思路（完善版）
-
 ## 项目目标
 
 本项目并不是模拟一场 **WTO 会议（WTO Meeting）**，而是模拟 **WTO 成员之间围绕渔业补贴展开的利益博弈（Interest-based Negotiation）**。
