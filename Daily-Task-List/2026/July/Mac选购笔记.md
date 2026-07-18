@@ -8,3 +8,59 @@
 | 银色 14 英寸 MacBook Pro (M5 Pro 芯片)；<br>15 核中央处理器、16 核图形处理器、16 核神经网络引擎<br><br>- 48GB 统一内存<br>    <br>- 1TB 固态硬盘<br><br>- 标准显示屏<br><br>- 96W USB-C 电源适配器     | 24634        | 20938.90    |
 | 银色 14 英寸 MacBook Pro (M5 Pro 芯片)；<br>18 核中央处理器、20 核图形处理器、16 核神经网络引擎<br><br>- 24GB 统一内存<br>    <br>- 1TB 固态硬盘<br><br>- 标准显示屏<br><br>- 96W USB-C 电源适配器     | 22249        | 18911.65    |
 | 银色 14 英寸 MacBook Pro (M5 Pro 芯片)；<br>18 核中央处理器、20 核图形处理器、16 核神经网络引擎<br><br>- 48GB 统一内存<br>    <br>- 1TB 固态硬盘<br><br>- 标准显示屏<br><br>- 96W USB-C 电源适配器     | 26749        | 22736.65    |
+
+
+## 我的真实使用场景
+```
+Mac
+↓
+写代码
+↓
+Docker
+↓
+调用 API
+↓
+偶尔
+ollama run qwen3
+看看效果
+```
+
+工作负载预计：
+```
+macOS
+5~7GB
+
+Chrome
+6~12GB
+
+VS Code
+2~4GB
+
+Docker
+4~10GB
+
+MongoDB
+1GB
+
+Redis
+0.5GB
+
+Milvus
+2~6GB
+
+聊天软件
+1GB
+
+Terminal
+1GB
+
+--------------------------------
+
+正常：
+
+22~30GB
+
+忙的时候：
+
+35GB+
+```
