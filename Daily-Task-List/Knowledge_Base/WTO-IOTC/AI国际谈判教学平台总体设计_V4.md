@@ -409,7 +409,7 @@ ai_draft → under_review → human_verified → published
 |Step|操作|说明|V6 变更|
 |---|---|---|---|
 |1|选择组织|WTO / RFMO(IOTC)|—|
-|2|填写谈判基础信息|课程名称、教师、时间、学时、模拟时长|—|
+|2|填写谈判基础信息|教师、时间、模拟时长|—|
 |3|选择协定 / 文书|如《渔业补贴协定》、IOTC Resolution|—|
 |4|选择会议|如 MC12、MC13、委员会会议、IOTC 年会|—|
 |5|选择议程|Agenda|—|
