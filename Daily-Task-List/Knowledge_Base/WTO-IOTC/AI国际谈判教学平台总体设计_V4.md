@@ -410,7 +410,7 @@ ai_draft → under_review → human_verified → published
 |---|---|---|---|
 |1|填写谈判基础信息|教师、时间、模拟时长2|填写谈判基础信息|
 | 2    | 选择组织                 | WTO / RFMO                                                   | —                                     |
-|3|选择子议题类型|如《渔业补贴协定》、IOTC Resolution|—|
+|3|选择协定 / 文书|如《渔业补贴协定》、IOTC Resolution|—|
 |4|选择会议|如 MC12、MC13、委员会会议、IOTC 年会|—|
 |5|选择议程|Agenda|—|
 |6|**选择教学议题**|从策展好的 `TeachingIssue` 中选择|**新增议题数下限：≥3**，见 9.1|
