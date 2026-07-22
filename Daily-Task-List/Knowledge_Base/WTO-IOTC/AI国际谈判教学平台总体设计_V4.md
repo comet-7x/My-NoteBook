@@ -406,7 +406,7 @@ ai_draft → under_review → human_verified → published
 
 # 九、教师端业务流程
 
-|Step|操作|说明|V2 变更|
+|Step|操作|说明|V6 变更|
 |---|---|---|---|
 |1|选择组织|WTO / RFMO(IOTC)|—|
 |2|填写课程基础信息|课程名称、教师、时间、学时、模拟时长|—|
