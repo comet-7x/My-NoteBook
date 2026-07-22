@@ -11,7 +11,7 @@
 
 ## 1.1 定位
 
-本项目**不是模拟一场 WTO 会议（WTO Meeting）**，而是模拟**成员之间围绕渔业补贴展开的利益博弈（Interest-based Negotiation）**。
+以WTO为例，本项目**不是模拟一场 WTO 会议（WTO Meeting）**，而是模拟**成员之间围绕渔业补贴展开的利益博弈（Interest-based Negotiation）**。
 
 学生真正学习的对象不是协定条文本身，而是：
 
