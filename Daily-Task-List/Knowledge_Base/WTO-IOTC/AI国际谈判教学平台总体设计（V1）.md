@@ -242,19 +242,12 @@ MC12 Adopted
 
 ```
 Knowledge Base
-
 │
-
 ├── Issue Database
-
 ├── Proposal Database
-
 ├── Country Position Database
-
 ├── Country Profile Database
-
 ├── Evidence Database
-
 └── Reference Database
 ```
 
@@ -315,13 +308,9 @@ Knowledge Base
 
 ```
 Issue
-
 ↓
-
 Evidence
-
 TN/RL/W/274
-
 Paragraph 18
 ```
 
@@ -331,43 +320,24 @@ Paragraph 18
 
 ```
 Organization
-
 │
-
 ├── WTO
-
 │   └── Fish Subsidies Agreement
-
 │       ├── Meeting
-
 │       │
-
 │       ├── Agenda
-
 │       │
-
 │       ├── Issue
-
 │       │
-
 │       ├── Proposal
-
 │       │
-
 │       ├── Country Position
-
 │       │
-
 │       ├── Evidence
-
 │       │
-
 │       └── Outcome
-
 │
-
 └── RFMO
-
     └── IOTC
 ```
 
@@ -379,29 +349,17 @@ Organization
 
 ```
 Issue
-
 ↓
-
 首次提出
-
 ↓
-
 国家提交Proposal
-
 ↓
-
 Chair Draft
-
 ↓
-
 多轮修订
-
 ↓
-
 Consensus
-
 ↓
-
 Final Agreement
 ```
 
@@ -416,9 +374,8 @@ Final Agreement
 选择组织
 
 ```
-WTO
-
-RFMO
+- WTO
+- RFMO
 ```
 
 ---
@@ -444,9 +401,8 @@ RFMO
 例如：
 
 ```
-Fish Subsidies Agreement
-
-IOTC Resolution
+- Fish Subsidies Agreement
+- IOTC Resolution
 ```
 
 ---
@@ -458,11 +414,9 @@ IOTC Resolution
 例如：
 
 ```
-MC12
-
-MC13
-
-Committee Meeting
+- MC12
+- MC13
+- Committee Meeting
 ```
 
 ---
@@ -474,11 +428,9 @@ Committee Meeting
 例如：
 
 ```
-Agenda 1
-
-Agenda 2
-
-Agenda 3
+- Agenda 1
+- Agenda 2
+- Agenda 3
 ```
 
 ---
@@ -490,9 +442,8 @@ Agenda 3
 例如：
 
 ```
-Issue1
-
-Issue2
+- Issue1
+- Issue2
 ```
 
 支持：
@@ -557,33 +508,19 @@ AI生成国家Brief
 
 ```
 认识问题
-
 ↓
-
 认识自己国家
-
 ↓
-
 认识其他国家
-
 ↓
-
 制定谈判策略
-
 ↓
-
 正式谈判
-
 ↓
-
 协商一致
-
 ↓
-
 AI复盘
-
 ↓
-
 教师点评
 ```
 
@@ -666,49 +603,27 @@ Negotiation Brief。
 
 ```
 主席宣布会议开始
-
 ↓
-
 秘书处介绍Agenda
-
 ↓
-
 介绍Issue
-
 ↓
-
 General Statement
-
 ↓
-
 第一轮磋商
-
 ↓
-
 提交Proposal
-
 ↓
-
 秘书处整合
-
 ↓
-
 第二轮磋商
-
 ↓
-
 形成Chair Draft
-
 ↓
-
 继续修改
-
 ↓
-
 Consensus Check
-
 ↓
-
 会议结束
 ```
 
@@ -795,53 +710,29 @@ RAG检索。
 
 ```
 国际组织原始文件（PDF）
-
 ↓
-
 OCR
-
 ↓
-
 Metadata
-
 ↓
-
 Issue Mining
-
 ↓
-
 Proposal Mining
-
 ↓
-
 Country Position Mining
-
 ↓
-
 Outcome Mining
-
 ↓
-
 Knowledge Base
-
 ↓
-
 教师创建课程
-
 ↓
-
 学生模拟谈判
-
 ↓
-
 AI全过程辅助
-
 ↓
-
 教师点评
-
 ↓
-
 课程评价
 ```
 
