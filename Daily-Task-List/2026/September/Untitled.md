@@ -28,10 +28,10 @@ cols:
   - {name: "Done", type: "checkbox"}
 -->
 
-| Priority | Task      | Status | ExpectedDue          | ActualFinished       | Done |
-| -------- | --------- | ------ | -------------------- | -------------------- | ---- |
-| 🔴P0     | Draft PRD | Doing  | 2026-09-07 18:30     |                      | [x]  |
-| 🟠P1     | Fix bug   | Done   | 2026-09-07 12:00     | 2026-09-07 14:05     | [x]  |
+| Priority | Task      | Status | ExpectedDue      | ActualFinished   | Done |
+| -------- | --------- | ------ | ---------------- | ---------------- | ---- |
+| 🔴P0     | Draft PRD | Doing  | 2026-09-07 18:30 |                  | [x]  |
+| 🟠P1     | Fix bug   | Done   | 2026-09-07 12:00 | 2026-09-07 14:05 | [x]  |
 
 
 
