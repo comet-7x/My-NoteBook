@@ -20,7 +20,7 @@ date: 2026-09-07
 ## 📋 今日任务
 <!-- table-fields id="tasks" v="1"
 cols:
-  - {name: "Priority", type: "select", options: [""]} 
+  - {name: "Priority", type: "select", options: ["🔴P0", "P1", "P2", "P3"]} 
   - {name: "Task",   type: "text"}
   - {name: "Status", type: "select", options: ["Todo","Doing","Done"]}
   - {name: "Due",    type: "date"}
@@ -31,9 +31,6 @@ cols:
 | Draft PRD | Doing  | 2026-07-22 | [x]  |
 
 
-| 任务优先级 |     |
-| ----- | --- |
-|       |     |
 
 - [ ] 🔴 · 计划 : 梳理WTO和IOTC的虚拟谈判模块前端流程 （9:00-10:00）；实际
     
