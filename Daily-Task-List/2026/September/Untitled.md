@@ -20,7 +20,7 @@ date: 2026-09-07
 ## 📋 今日任务
 <!-- table-fields id="tasks" v="1"
 cols:
-- 
+  - {name: "Priority", type: "select", options: [""]} 
   - {name: "Task",   type: "text"}
   - {name: "Status", type: "select", options: ["Todo","Doing","Done"]}
   - {name: "Due",    type: "date"}
