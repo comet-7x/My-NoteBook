@@ -23,15 +23,15 @@ cols:
   - {name: "Priority", type: "select", options: ["🔴P0", "🟠P1", "🟡P2", "⚪P3"]}
   - {name: "Task", type: "text"}
   - {name: "Status", type: "select", options: ["Todo","Doing","Done"]}
-  - {name: "ExpectedDue", type: "text"} 
+  - {name: "ExpectedDue",    type: "text"}
   - {name: "ActualFinished", type: "text"}
   - {name: "Done", type: "checkbox"}
 -->
 
-| Task     | Status | ExpectedDue | ActualFinished | Done |
-| -------- | ------ | ----------- | -------------- | ---- |
-| Draft PRD| Doing  | 2026-07-22  |                | [x]  |
-
+| Priority | Task      | Status | ExpectedDue          | ActualFinished       | Done |
+| -------- | --------- | ------ | -------------------- | -------------------- | ---- |
+| 🔴P0     | Draft PRD | Doing  | 2026-09-07 18:30     |                      | [x]  |
+| 🟠P1     | Fix bug   | Done   | 2026-09-07 12:00     | 2026-09-07 14:05     | [x]  |
 
 
 
