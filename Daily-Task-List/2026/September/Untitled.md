@@ -18,6 +18,17 @@ date: 2026-09-07
 2. 和心怡姐线下面谈，3:00-4:00
 
 ## 📋 今日任务
+<!-- table-fields id="tasks" v="1"
+cols:
+- 
+  - {name: "Task",   type: "text"}
+  - {name: "Status", type: "select", options: ["Todo","Doing","Done"]}
+  - {name: "Due",    type: "date"}
+  - {name: "Done",   type: "checkbox"}
+-->
+| Task      | Status | Due        | Done |
+| --------- | ------ | ---------- | ---- |
+| Draft PRD | Doing  | 2026-07-22 | [x]  |
 
 
 | 任务优先级 |     |
