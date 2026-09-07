@@ -31,7 +31,7 @@ tags:
 
 示例：
 
-- [x] 🔴 测试图表检测 · 计划 14:00–15:00 · 实际 14:10–16:05 → 结论见 [[某某笔记]] %%
+- [x] 🔴 测试图表检测 · 计划 14:00–15:00 · 实际 14:10–16:05 → 结论见 [[某某笔记]] 
     
 - [ ] 🔴 · 计划 : – : · 实际 : – :
     
@@ -39,8 +39,23 @@ tags:
     
 - [ ] 🟡 · 碎片时间
     
-- [ ] ⚪️
-    
+- [ ] ⚪️%%
+
+<!-- table-fields id="tasks" v="1"
+cols:
+  - {name: "Priority", type: "select", options: ["🔴P0", "🟠P1", "🟡P2", "⚪P3"]}
+  - {name: "Task", type: "text"}
+  - {name: "Status", type: "select", options: ["Todo","Doing","Done"]}
+  - {name: "ExpectedDue",    type: "text"}
+  - {name: "ActualFinished", type: "text"}
+  - {name: "Done", type: "checkbox"}
+-->
+
+| Priority | Task      | Status | ExpectedDue      | ActualFinished   | Done |
+| -------- | --------- | ------ | ---------------- | ---------------- | ---- |
+| 🔴P0     | Draft PRD | Doing  | 2026-09-07 18:30 |                  | [x]  |
+
+  
 
 ## 🧠 记录
 
