@@ -41,9 +41,9 @@ tags:
     
 - [ ] ⚪️%%
 
-| Priority | Task | Status | ExpectedDue | ActualFinished | Done |
-| -------- | ---- | ------ | ----------- | -------------- | ---- |
-|          |      |        |             |                |      |
+| Priority              | Task | Status          | ExpectedDue | ActualFinished | Done |
+| --------------------- | ---- | --------------- | ----------- | -------------- | ---- |
+| 🔴P0, 🟠P1, 🟡P2, ⚪P3 | -    | Todo/Doing/Done |             |                |      |
 
 
 
