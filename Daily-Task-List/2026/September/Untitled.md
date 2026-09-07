@@ -23,8 +23,8 @@ cols:
   - {name: "Priority", type: "select", options: ["🔴P0", "🟠P1", "🟡P2", "⚪P3"]}
   - {name: "Task", type: "text"}
   - {name: "Status", type: "select", options: ["Todo","Doing","Done"]}
-  - {name: "ExpectedDue",  type: "date"}
-  - {name: "ActualFinished", type: "date"}
+  - {name: "ExpectedDue", type: "text"} 
+  - {name: "ActualFinished", type: "text"}
   - {name: "Done", type: "checkbox"}
 -->
 
