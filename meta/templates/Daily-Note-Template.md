@@ -47,22 +47,6 @@ tags:
 
 
 
-<!-- table-fields id="tasks" v="1"
-cols:
-  - {name: "Priority", type: "select", options: ["🔴P0", "🟠P1", "🟡P2", "⚪P3"]}
-  - {name: "Task", type: "text"}
-  - {name: "Status", type: "select", options: ["Todo","Doing","Done"]}
-  - {name: "ExpectedDue",    type: "text"}
-  - {name: "ActualFinished", type: "text"}
-  - {name: "Done", type: "checkbox"}
--->
-
-| Priority | Task      | Status | ExpectedDue      | ActualFinished   | Done |
-| -------- | --------- | ------ | ---------------- | ---------------- | ---- |
-| 🔴P0     | Draft PRD | Doing  | 2026-09-07 18:30 |                  | [x]  |
-
-  
-
 ## 🧠 记录
 
 %% 只写决策、死路、踩坑原因、方案取舍；不写操作步骤（下次能重新推导出来的都不用写）。 通用的坑要升级成 Knowledge_Base 独立笔记。 %% **关键决策**： %% 为什么选 B 不选 C %%
