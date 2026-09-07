@@ -41,9 +41,9 @@ tags:
     
 - [ ] ⚪️%%
 
-| Priority |     |
-| -------- | --- |
-|          |     |
+| Priority | Task | Status | ExpectedDue | ActualFinished | Done |
+| -------- | ---- | ------ | ----------- | -------------- | ---- |
+|          |      |        |             |                |      |
 
 
 
