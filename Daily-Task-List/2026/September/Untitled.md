@@ -20,15 +20,18 @@ date: 2026-09-07
 ## 📋 今日任务
 <!-- table-fields id="tasks" v="1"
 cols:
-  - {name: "Priority", type: "select", options: ["🔴P0", "🟠P1", " 🟡P2", "⚪️P3"]} 
-  - {name: "Task",   type: "text"}
+  - {name: "Priority", type: "select", options: ["🔴P0", "🟠P1", "🟡P2", "⚪P3"]}
+  - {name: "Task", type: "text"}
   - {name: "Status", type: "select", options: ["Todo","Doing","Done"]}
-  - {name: "Due",    type: "date"}
-  - {name: "Done",   type: "checkbox"}
+  - {name: "ExpectedDue",  type: "date"}
+  - {name: "ActualFinished", type: "date"}
+  - {name: "Done", type: "checkbox"}
 -->
-| Task      | Status | Due        | Done |
-| --------- | ------ | ---------- | ---- |
-| Draft PRD | Doing  | 2026-07-22 | [x]  |
+
+| Task     | Status | ExpectedDue | ActualFinished | Done |
+| -------- | ------ | ----------- | -------------- | ---- |
+| Draft PRD| Doing  | 2026-07-22  |                | [x]  |
+
 
 
 
