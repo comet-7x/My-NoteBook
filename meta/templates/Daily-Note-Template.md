@@ -41,6 +41,12 @@ tags:
     
 - [ ] ⚪️%%
 
+| Priority |     |
+| -------- | --- |
+|          |     |
+
+
+
 <!-- table-fields id="tasks" v="1"
 cols:
   - {name: "Priority", type: "select", options: ["🔴P0", "🟠P1", "🟡P2", "⚪P3"]}
