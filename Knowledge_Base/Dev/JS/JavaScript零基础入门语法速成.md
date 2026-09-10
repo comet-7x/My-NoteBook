@@ -332,7 +332,7 @@ if (fs.existsSync(filePath)) {
 
 ## 包管理器
 
-包管理器
+### 包管理器
 使用Python的包管理做类比：
 
 | JS 生态（Node）                            | Python 生态                             | 简要说明                                    |
@@ -345,3 +345,13 @@ if (fs.existsSync(filePath)) {
 | `package-lock.json` / `pnpm-lock.yaml` | `requirements-lock.txt` / `uv.lock`   | **锁版本文件**，固定所有依赖精确版本，保证所有人环境一致          |
 | npx                                    | 无直接对应（近似 `uvx`）                       | 临时执行包里面的命令，不用全局安装                       |
 
+### 命令对照
+
+|JS(pnpm)|Python(uv)|作用|
+|---|---|---|
+|`pnpm install`|`uv sync`|安装项目全部依赖|
+|`pnpm add axios`|`uv add requests`|新增一个依赖包|
+|`pnpm remove axios`|`uv remove requests`|删除包|
+|`pnpm add -D vite`|`uv add --dev ruff`|安装开发依赖（只开发阶段用，上线不需要）|
+|`pnpm exec xxx`|`uv run xxx`|在当前项目依赖环境下执行命令|
+|`npx xxx`|`uvx xxx`|临时下载包，运行一次就删掉，不安装到项目|
