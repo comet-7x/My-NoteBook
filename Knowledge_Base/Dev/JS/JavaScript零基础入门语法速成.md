@@ -330,20 +330,51 @@ if (fs.existsSync(filePath)) {
 |**路径拼接**|`__dirname + '/data.json'`|`path.join(__dirname, 'data.json')`|手动拼斜杠在 Windows 和 Linux 上极易引发路径分隔符错误|
 
 
-## 包管理器
+## 包管理器与项目工程化
+Node.js 生态拥有多款包管理器工具。目前社区推荐首选更轻量、高效的 **pnpm**（类似 Python 现代生态中的 **uv**），最基础通用的为内置的 **npm**（类似 **pip**）。
 
-### 包管理器
-使用Python的包管理做类比：
+### 包管理器生态与核心概念类比
 
-| JS 生态（Node）                            | Python 生态                             | 简要说明                                    |
-| -------------------------------------- | ------------------------------------- | --------------------------------------- |
-| **npm**                                | pip                                   | 官方自带，最基础的包管理器。Node 自带 npm；Python 自带 pip |
-| **yarn**                               | pip（早期）                               | 当年 Facebook 出，为解决 npm 旧版速度、锁版本问题，现在用得变少 |
-| **pnpm**                               | uv                                    | 新一代、更快、更省磁盘空间。pnpm 替代 npm；uv 替代 pip     |
-| `package.json`                         | `pyproject.toml` / `requirements.txt` | 项目清单，记录这个项目需要哪些包、版本                     |
-| `node_modules`                         | `.venv`虚拟环境里的 site-packages           | 存放下载下来的库代码                              |
-| `package-lock.json` / `pnpm-lock.yaml` | `requirements-lock.txt` / `uv.lock`   | **锁版本文件**，固定所有依赖精确版本，保证所有人环境一致          |
-| npx                                    | 无直接对应（近似 `uvx`）                       | 临时执行包里面的命令，不用全局安装                       |
+|**JS 生态（Node）**|**Python 生态**|**简要说明**|
+|---|---|---|
+|**npm**|`pip`|官方内置，最基础的包管理器（装 Node 自带）。|
+|**pnpm**|`uv` / `poetry`|新一代主流，硬链接机制极度节省磁盘空间、安装速度极快。|
+|`package.json`|`pyproject.toml` / `requirements.txt`|项目清单文件，声明项目元信息、依赖包版本及脚本命令。|
+|`node_modules/`|`.venv/lib/site-packages`|本地缓存与依赖代码的存放目录（**严禁提交至 Git 仓库**）。|
+|`pnpm-lock.yaml` / `package-lock.json`|`uv.lock` / `poetry.lock`|依赖锁定文件，记录每个依赖项的具体安装版本，保证团队环境一致。|
+|`npx` / `pnpm dlx`|`uvx`|临时拉取远端工具执行，执行完即销毁，无需全局安装。|
+
+### 标准工程上手全流程
+**第一步：初始化项目**
+
+```bash
+# 方式 A：使用 pnpm
+pnpm init
+
+# 方式 B：使用内置 npm（-y 表示全部使用默认配置）
+npm init -y
+```
+
+执行后会在当前目录生成基础的 `package.json` 清单。
+
+**第二步：安装依赖库**
+
+```bash
+# 安装网络请求库 axios
+pnpm add axios
+# 对应 npm：npm install axios
+```
+
+**第三步：配置 `.gitignore`（避坑必备）**
+
+在项目根目录新建 `.gitignore` 文件并写入：
+
+Plaintext
+
+```
+node_modules
+```
+
 
 ### 命令对照
 
