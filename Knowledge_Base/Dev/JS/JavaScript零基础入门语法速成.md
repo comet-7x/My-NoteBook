@@ -71,9 +71,7 @@ console.log(`学生 ${name} 的得分是: ${score}`);
 
 ## 5. 函数定义（普通函数与箭头函数）
 
-JavaScript
-
-```
+```JavaScript
 // 1. 普通函数声明
 function sayHello(msg) {
   return `收到消息: ${msg}`;
@@ -92,18 +90,13 @@ console.log(multiply(3, 4)); // 输出 12
 ```
 
 > **类比 Python**：`multiply = lambda a, b: a * b`
-> 
->   
+
 
 ## 6. 条件判断与全等比较
 
 判断必须使用全等号 `===` 和不全等号 `!==`，避免类型隐式转换导致的 Bug。
 
-  
-
-JavaScript
-
-```
+```JavaScript
 const score = 80;
 
 if (score >= 90) {
@@ -123,9 +116,7 @@ if (val === 100) {
 
 ## 7. 数组常用操作
 
-JavaScript
-
-```
+```JavaScript
 const list = ["a", "b", "c"];
 
 // 1. push：向末尾添加元素（类似 Python 的 list.append()）
@@ -151,11 +142,7 @@ console.log(list.includes("a")); // true
 
 快速提取对象/数组属性，或展开拷贝。
 
-  
-
-JavaScript
-
-```
+```JavaScript
 // 1. 对象解构
 const config = { host: "localhost", port: 8080, debug: true };
 const { host, port } = config; 
@@ -171,9 +158,7 @@ const updatedConfig = { ...config, port: 9000 }; // 复制 config 并覆盖 port
 
 ## 9. 异常捕获 try ... catch
 
-JavaScript
-
-```
+```JavaScript
 try {
   // 尝试执行可能报错的逻辑
   const result = JSON.parse("invalid json string");
@@ -194,11 +179,7 @@ try {
 
 Node.js 绝大多数耗时操作（网络请求、非阻塞文件读写）都是异步的。
 
-  
-
-JavaScript
-
-```
+```JavaScript
 // 模拟一个异步耗时任务
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -212,14 +193,10 @@ runTask();
 ```
 
 > **类比 Python**：`async def run_task(): await asyncio.sleep(1)`
-> 
->   
 
 ## 11. JSON 互转（处理文本与数据）
 
-JavaScript
-
-```
+```JavaScript
 const data = { name: "Tom", age: 18 };
 
 // 1. 对象 -> JSON 文本（保存/写入文件用）
@@ -231,16 +208,12 @@ console.log(parsedObj.name); // "Tom"
 ```
 
 > **类比 Python**：`json.dumps()` 与 `json.loads()`
-> 
->   
 
 ## 12. Node.js 模块导入与文件读写实战
 
 Node.js 环境提供核心系统模块（`fs` 操作文件，`path` 拼接路径）。
 
-JavaScript
-
-```
+```JavaScript
 // 加载内置模块（CommonJS 规范）
 const fs = require('fs');
 const path = require('path');
