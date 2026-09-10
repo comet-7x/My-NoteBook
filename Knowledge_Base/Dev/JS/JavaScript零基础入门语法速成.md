@@ -347,6 +347,7 @@ if (fs.existsSync(filePath)) {
 
 ### 命令对照
 
+
 |JS(pnpm)|Python(uv)|作用|
 |---|---|---|
 |`pnpm install`|`uv sync`|安装项目全部依赖|
