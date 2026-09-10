@@ -369,21 +369,21 @@ pnpm add axios
 
 在项目根目录新建 `.gitignore` 文件并写入：
 
-Plaintext
-
-```
+```plaintext
 node_modules
 ```
 
 
-### 命令对照
+### 常用命令对照速查
 
+日常开发以操作 `pnpm` 为主；若未安装 pnpm，使用内置 `npm` 亦可无缝替换：
 
-|JS(pnpm)|Python(uv)|作用|
-|---|---|---|
-|`pnpm install`|`uv sync`|安装项目全部依赖|
-|`pnpm add axios`|`uv add requests`|新增一个依赖包|
-|`pnpm remove axios`|`uv remove requests`|删除包|
-|`pnpm add -D vite`|`uv add --dev ruff`|安装开发依赖（只开发阶段用，上线不需要）|
-|`pnpm exec xxx`|`uv run xxx`|在当前项目依赖环境下执行命令|
-|`npx xxx`|`uvx xxx`|临时下载包，运行一次就删掉，不安装到项目|
+|**动作目标**|**pnpm（现代推荐）**|**npm（内置默认）**|**Python (uv / pip)**|**说明**|
+|---|---|---|---|---|
+|**初始化项目**|`pnpm init`|`npm init -y`|`uv init`|生成 `package.json` 项目清单|
+|**同步全部依赖**|`pnpm install`|`npm install`|`uv sync`|克隆他人项目后一键安装 `node_modules`|
+|**新增运行依赖**|`pnpm add <包名>`|`npm i <包名>`|`uv add <包名>`|记录在 `dependencies` 中（生产运行必需）|
+|**新增开发依赖**|`pnpm add -D <包名>`|`npm i -D <包名>`|`uv add --dev <包名>`|记录在 `devDependencies`（仅用于打包、测试等开发环节）|
+|**删除依赖**|`pnpm remove <包名>`|`npm uninstall <包名>`|`uv remove <包名>`|移除本地包并自动从清单中删除|
+|**运行项目内命令**|`pnpm exec <命令>`|`npx <命令>`|`uv run <命令>`|调用当前项目中已安装的本地 CLI 工具|
+|**临时免安装执行**|`pnpm dlx <包名>`|`npx <包名>`|`uvx <包名>`|临时下载、执行一次后自动销毁|
