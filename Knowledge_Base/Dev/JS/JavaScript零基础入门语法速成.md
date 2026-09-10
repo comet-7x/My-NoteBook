@@ -2,43 +2,35 @@
 
 本手册专为有 C/Python 基础或零基础快速上手 JS / Node.js 脚本编写设计。
 
+
+## 安装Node.js
+
 ### 第一步：安装 Node.js
 
 根据操作系统选择最直接的安装方式（均建议安装 **LTS（长期支持）** 版本）：
 
 - **Windows / macOS（安装包方式，最简单）**：
-    
     1. 访问官网 [nodejs.org](https://nodejs.org/)。
-        
     2. 下载标注为 **LTS** 的安装包（`.msi` 或 `.pkg`）。
-        
     3. 双击运行安装程序，一路点击“下一步（Next）”直到完成（默认配置即可，它会自动配置环境变量）。
-        
+
 - **macOS（命令行方式）**：
-    
-    Bash
-    
-    ```
+    ```bash
     brew install node
     ```
-    
+
 - **Linux (Ubuntu / Debian)**：
-    
-    Bash
-    
-    ```
+    ```bash
     sudo apt update
     sudo apt install -y nodejs npm
     ```
-    
+
 
 ### 第二步：验证安装是否成功
 
 打开终端（Windows 使用 `PowerShell` 或 `CMD`，Mac / Linux 使用 `Terminal`），输入以下命令：
 
-Bash
-
-```
+```bash
 node -v
 npm -v
 ```
@@ -49,9 +41,7 @@ npm -v
 
 **1. 创建项目文件夹并进入**
 
-Bash
-
-```
+```bash
 mkdir js-demo
 cd js-demo
 ```
@@ -60,9 +50,7 @@ cd js-demo
 
 新建一个名为 `app.js` 的文件（可以用 VS Code 等编辑器打开，也可以直接在终端创建）：
 
-Bash
-
-```
+```bash
 # Mac / Linux 可使用 touch，Windows 可使用 ni
 touch app.js
 ```
@@ -71,9 +59,7 @@ touch app.js
 
 打开 `app.js`，填入以下测试代码并保存：
 
-JavaScript
-
-```
+```JavaScript
 const message = "你好，Node.js 已经跑起来了！";
 const numbers = [1, 2, 3, 4, 5];
 
