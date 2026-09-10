@@ -328,3 +328,17 @@ if (fs.existsSync(filePath)) {
 |**变量声明**|`var a = 1;`|`const a = 1;` 或 `let a = 1;`|`var` 存在变量提升和函数级作用域污染，现代 JS 一律不用|
 |**布尔判断**|`if (str.length > 0)`|`if (str)`|空字符串 `""`、数字 `0`、`null`、`undefined` 在条件判断中自动视为 `false`|
 |**路径拼接**|`__dirname + '/data.json'`|`path.join(__dirname, 'data.json')`|手动拼斜杠在 Windows 和 Linux 上极易引发路径分隔符错误|
+
+
+## 包管理器
+使用Python的包管理做类比：
+
+| JS 生态（Node）                            | Python 生态                             | 简要说明                                    |
+| -------------------------------------- | ------------------------------------- | --------------------------------------- |
+| **npm**                                | pip                                   | 官方自带，最基础的包管理器。Node 自带 npm；Python 自带 pip |
+| **yarn**                               | pip（早期）                               | 当年 Facebook 出，为解决 npm 旧版速度、锁版本问题，现在用得变少 |
+| **pnpm**                               | uv                                    | 新一代、更快、更省磁盘空间。pnpm 替代 npm；uv 替代 pip     |
+| `package.json`                         | `pyproject.toml` / `requirements.txt` | 项目清单，记录这个项目需要哪些包、版本                     |
+| `node_modules`                         | `.venv`虚拟环境里的 site-packages           | 存放下载下来的库代码                              |
+| `package-lock.json` / `pnpm-lock.yaml` | `requirements-lock.txt` / `uv.lock`   | **锁版本文件**，固定所有依赖精确版本，保证所有人环境一致          |
+| npx                                    | 无直接对应（近似 `uvx`）                       | 临时执行包里面的命令，不用全局安装                       |
