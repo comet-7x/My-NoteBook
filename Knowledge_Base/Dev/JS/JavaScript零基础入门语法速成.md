@@ -71,25 +71,26 @@ console.log("计算结果:", numbers.map(x => x * 10));
 
 确保终端所在的路径是包含 `app.js` 的目录，输入：
 
-Bash
-
-```
+```bash
 node app.js
 ```
 
 终端将立即输出：
 
-Plaintext
-
-```
+```plaintext
 你好，Node.js 已经跑起来了！
 计算结果: [ 10, 20, 30, 40, 50 ]
 ```
 
 ### 进阶提示：临时测试的交互式终端（REPL）
+如果只想快速验证几行 JS 语法或简单的数组计算，不需要创建文件：
+1. 终端直接输入 `node` 回车，即可进入交互模式（类似 Python 的 `python` REPL）。
+2. 输入 `const a = 1; a + 2;` 直接回车看结果。
+3. 连续按两次 `Ctrl + C` 退出交互模式。
 
+## 语法速查
 
-## 1. 变量：存东西
+### 1. 变量：存东西
 
 用 `const` 或 `let` 声明变量，严禁使用旧式的 `var`。
 
@@ -106,7 +107,7 @@ console.log(name, age); // 打印到终端，相当于 Python 的 print()
 
 > **类比 Python**：`name = "Hello JavaScript"`
 
-## 2. 注释
+### 2. 注释
 
 ```JavaScript
 // 单行注释（这一行不会执行）
@@ -117,7 +118,7 @@ console.log(name, age); // 打印到终端，相当于 Python 的 print()
 */
 ```
 
-## 3. 数据类型
+### 3. 数据类型
 
 ```JavaScript
 const num = 100;         // 数字 Number（整数和小数都是 Number）
@@ -139,7 +140,7 @@ console.log(user.name);  // 取属性写法 1：输出 abc
 console.log(user["age"]); // 取属性写法 2（当键名是变量时用这种）
 ```
 
-## 4. 字符串进阶：模板字符串
+### 4. 字符串进阶：模板字符串
 
 用反引号 `` ` `` 包裹，通过 `${}` 嵌入变量或运算。
 
@@ -155,7 +156,7 @@ console.log(`学生 ${name} 的得分是: ${score}`);
 
 > **类比 Python**：`f"学生 {name} 的得分是: {score}"`
 
-## 5. 函数定义（普通函数与箭头函数）
+### 5. 函数定义（普通函数与箭头函数）
 
 ```JavaScript
 // 1. 普通函数声明
@@ -178,7 +179,7 @@ console.log(multiply(3, 4)); // 输出 12
 > **类比 Python**：`multiply = lambda a, b: a * b`
 
 
-## 6. 条件判断与全等比较
+### 6. 条件判断与全等比较
 
 判断必须使用全等号 `===` 和不全等号 `!==`，避免类型隐式转换导致的 Bug。
 
@@ -200,7 +201,7 @@ if (val === 100) {
 }
 ```
 
-## 7. 数组常用操作
+### 7. 数组常用操作
 
 ```JavaScript
 const list = ["a", "b", "c"];
@@ -224,7 +225,7 @@ const filtered = nums.filter(x => x > 1); // [2, 3]
 console.log(list.includes("a")); // true
 ```
 
-## 8. 解构赋值与扩展运算符
+### 8. 解构赋值与扩展运算符
 
 快速提取对象/数组属性，或展开拷贝。
 
@@ -242,7 +243,7 @@ console.log(first); // 10
 const updatedConfig = { ...config, port: 9000 }; // 复制 config 并覆盖 port
 ```
 
-## 9. 异常捕获 try ... catch
+### 9. 异常捕获 try ... catch
 
 ```JavaScript
 try {
@@ -261,7 +262,7 @@ try {
 > 
 >   
 
-## 10. 异步操作：Promise 与 async / await
+### 10. 异步操作：Promise 与 async / await
 
 Node.js 绝大多数耗时操作（网络请求、非阻塞文件读写）都是异步的。
 
@@ -280,7 +281,7 @@ runTask();
 
 > **类比 Python**：`async def run_task(): await asyncio.sleep(1)`
 
-## 11. JSON 互转（处理文本与数据）
+### 11. JSON 互转（处理文本与数据）
 
 ```JavaScript
 const data = { name: "Tom", age: 18 };
@@ -295,7 +296,7 @@ console.log(parsedObj.name); // "Tom"
 
 > **类比 Python**：`json.dumps()` 与 `json.loads()`
 
-## 12. Node.js 模块导入与文件读写实战
+### 12. Node.js 模块导入与文件读写实战
 
 Node.js 环境提供核心系统模块（`fs` 操作文件，`path` 拼接路径）。
 
@@ -319,7 +320,7 @@ if (fs.existsSync(filePath)) {
 }
 ```
 
-## 核心避坑指南
+### 核心避坑指南
 
 |**场景**|**错误/不推荐写法**|**正确/规范写法**|**说明**|
 |---|---|---|---|
