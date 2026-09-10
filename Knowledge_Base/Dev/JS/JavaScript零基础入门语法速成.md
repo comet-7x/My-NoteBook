@@ -331,6 +331,8 @@ if (fs.existsSync(filePath)) {
 
 
 ## 包管理器
+
+包管理器
 使用Python的包管理做类比：
 
 | JS 生态（Node）                            | Python 生态                             | 简要说明                                    |
@@ -342,3 +344,4 @@ if (fs.existsSync(filePath)) {
 | `node_modules`                         | `.venv`虚拟环境里的 site-packages           | 存放下载下来的库代码                              |
 | `package-lock.json` / `pnpm-lock.yaml` | `requirements-lock.txt` / `uv.lock`   | **锁版本文件**，固定所有依赖精确版本，保证所有人环境一致          |
 | npx                                    | 无直接对应（近似 `uvx`）                       | 临时执行包里面的命令，不用全局安装                       |
+
