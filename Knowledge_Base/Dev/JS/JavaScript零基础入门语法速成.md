@@ -335,24 +335,28 @@ Node.js 生态拥有多款包管理器工具。目前社区推荐首选更轻量
 
 ### 包管理器生态与核心概念类比
 
-|**JS 生态（Node）**|**Python 生态**|**简要说明**|
-|---|---|---|
-|**npm**|`pip`|官方内置，最基础的包管理器（装 Node 自带）。|
-|**pnpm**|`uv` / `poetry`|新一代主流，硬链接机制极度节省磁盘空间、安装速度极快。|
-|`package.json`|`pyproject.toml` / `requirements.txt`|项目清单文件，声明项目元信息、依赖包版本及脚本命令。|
-|`node_modules/`|`.venv/lib/site-packages`|本地缓存与依赖代码的存放目录（**严禁提交至 Git 仓库**）。|
-|`pnpm-lock.yaml` / `package-lock.json`|`uv.lock` / `poetry.lock`|依赖锁定文件，记录每个依赖项的具体安装版本，保证团队环境一致。|
-|`npx` / `pnpm dlx`|`uvx`|临时拉取远端工具执行，执行完即销毁，无需全局安装。|
+| **维度**    | **npm**             | **yarn**          | **pnpm**         | **Python 生态**                         | **核心说明**                                                   |
+| --------- | ------------------- | ----------------- | ---------------- | ------------------------------------- | ---------------------------------------------------------- |
+| **定位**    | 官方内置基础款             | Facebook 推出的老牌替代品 | 现代主流高效款          | `pip` / `uv`                          | 安装 Node 自带 npm；yarn 早期解决了安装慢与锁版本问题；pnpm 则是当前最省空间、速度最快的主流方案 |
+| **项目清单**  | `package.json`      | `package.json`    | `package.json`   | `pyproject.toml` / `requirements.txt` | 声明项目名称、版本号、依赖列表及快捷脚本                                       |
+| **依赖存放**  | `node_modules/`     | `node_modules/`   | `node_modules/`  | `.venv` 下的 `site-packages`            | 存放所有下载的库源码（**严禁提交至 Git 仓库**）                               |
+| **锁定文件**  | `package-lock.json` | `yarn.lock`       | `pnpm-lock.yaml` | `requirements-lock.txt` / `uv.lock`   | 记录精确的依赖子版本与哈希值，确保跨机器安装环境完全一致                               |
+| **临时执行器** | `npx`               | `yarn dlx`        | `pnpm dlx`       | `uvx`                                 | 临时从远端拉取并执行工具，执行完毕后自动清理，无需全局安装                              |
+
+### 2. 标准工程上手全流程
 
 ### 标准工程上手全流程
 **第一步：初始化项目**
 
 ```bash
-# 方式 A：使用 pnpm
+# 方式 A：pnpm
 pnpm init
 
-# 方式 B：使用内置 npm（-y 表示全部使用默认配置）
+# 方式 B：npm（-y 表示全部参数跳过询问，使用默认值）
 npm init -y
+
+# 方式 C：yarn
+yarn init -y
 ```
 
 执行后会在当前目录生成基础的 `package.json` 清单。
@@ -360,9 +364,14 @@ npm init -y
 **第二步：安装依赖库**
 
 ```bash
-# 安装网络请求库 axios
+# 方式 A：pnpm
 pnpm add axios
-# 对应 npm：npm install axios
+
+# 方式 B：npm
+npm install axios
+
+# 方式 C：yarn
+yarn add axios
 ```
 
 **第三步：配置 `.gitignore`（避坑必备）**
@@ -373,17 +382,16 @@ pnpm add axios
 node_modules
 ```
 
-
 ### 常用命令对照速查
 
-日常开发以操作 `pnpm` 为主；若未安装 pnpm，使用内置 `npm` 亦可无缝替换：
-
-|**动作目标**|**pnpm（现代推荐）**|**npm（内置默认）**|**Python (uv / pip)**|**说明**|
-|---|---|---|---|---|
-|**初始化项目**|`pnpm init`|`npm init -y`|`uv init`|生成 `package.json` 项目清单|
-|**同步全部依赖**|`pnpm install`|`npm install`|`uv sync`|克隆他人项目后一键安装 `node_modules`|
-|**新增运行依赖**|`pnpm add <包名>`|`npm i <包名>`|`uv add <包名>`|记录在 `dependencies` 中（生产运行必需）|
-|**新增开发依赖**|`pnpm add -D <包名>`|`npm i -D <包名>`|`uv add --dev <包名>`|记录在 `devDependencies`（仅用于打包、测试等开发环节）|
-|**删除依赖**|`pnpm remove <包名>`|`npm uninstall <包名>`|`uv remove <包名>`|移除本地包并自动从清单中删除|
-|**运行项目内命令**|`pnpm exec <命令>`|`npx <命令>`|`uv run <命令>`|调用当前项目中已安装的本地 CLI 工具|
-|**临时免安装执行**|`pnpm dlx <包名>`|`npx <包名>`|`uvx <包名>`|临时下载、执行一次后自动销毁|
+|**动作目标**|**pnpm（现代推荐）**|**npm（内置默认）**|**yarn（老牌替代）**|**Python (uv / pip)**|**说明**|
+|---|---|---|---|---|---|
+|**初始化项目**|`pnpm init`|`npm init -y`|`yarn init -y`|`uv init`|生成 `package.json`|
+|**同步全部依赖**|`pnpm install`|`npm install`|`yarn install`|`uv sync` / `pip install -r ...`|克隆他人仓库后一键装齐 `node_modules`|
+|**新增运行依赖**|`pnpm add <包名>`|`npm i <包名>`|`yarn add <包名>`|`uv add <包名>`|写入 `dependencies`，生产环境必需|
+|**新增开发依赖**|`pnpm add -D <包名>`|`npm i -D <包名>`|`yarn add -D <包名>`|`uv add --dev <包名>`|写入 `devDependencies`，仅开发/构建用|
+|**删除依赖**|`pnpm remove <包名>`|`npm uninstall <包名>`|`yarn remove <包名>`|`uv remove <包名>`|从本地移除并从配置清单删除|
+|**全局安装工具**|`pnpm add -g <包名>`|`npm i -g <包名>`|`yarn global add <包名>`|`pip install <包名>`|安装到系统全局命令路径|
+|**运行项目内工具**|`pnpm exec <命令>`|`npx <命令>`|`yarn run <命令>`|`uv run <命令>`|调用当前项目安装在本地的 CLI 工具|
+|**免安装临时执行**|`pnpm dlx <包名>`|`npx <包名>`|`yarn dlx <包名>`|`uvx <包名>`|临时下载运行，不落地到项目依赖|
+|**运行自定义脚本**|`pnpm <脚本名>`|`npm run <脚本名>`|`yarn <脚本名>`|`uv run ...`|运行 `package.json` 中 `scripts` 定义的命令|
