@@ -238,6 +238,7 @@ Host steins-workspace
   HostName 100.64.0.15
   User zhihao
 
+  # 假设配置了免密连接，请填写密钥地址，如果没有配置，请删除这一行
   IdentityFile ~/.ssh/steins_workspace_remote
 
   ConnectTimeout 10
