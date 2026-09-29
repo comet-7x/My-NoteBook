@@ -277,7 +277,7 @@ Mac Clash
 
 ## 2. Mac VSCode 配置客户端身份
 
-Mac VSCode 的 `settings.json`：
+Mac VS Code，`Cmd+,` 打开设置 `settings.json`：
 
 ```json
 {
@@ -291,7 +291,7 @@ Mac VSCode 的 `settings.json`：
 }
 ```
 
-Windows 对应：
+Windows VS Code，`Ctrl+,`：
 
 ```json
 {
