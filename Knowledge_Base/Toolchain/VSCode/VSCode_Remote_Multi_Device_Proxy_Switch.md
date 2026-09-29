@@ -50,25 +50,15 @@ Claude Remote
 整体链路：
 
 ```text
-Mac
-100.64.0.40:7897
-       ▲
+Mac(100.64.0.40:7897)
        │ Tailscale
-       │
-       │
-Linux Server
-100.64.0.15
-       │
-       │ 自动判断客户端
        ▼
-.auto-proxy.zsh
-
-
-Windows
-100.64.0.4:7890
+Linux Server(100.64.0.15)
+       │ 内部运行 .auto-proxy.zsh（自动识别客户端）
        ▲
        │ Tailscale
-       └──────── Server
+Windows(100.64.0.4:7890)
+
 ```
 
 服务器最终设置：
