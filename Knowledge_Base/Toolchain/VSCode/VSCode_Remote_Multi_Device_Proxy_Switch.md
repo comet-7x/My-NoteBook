@@ -1,300 +1,1077 @@
 ---
-title: VSCode_Remote_Multi_Device_Proxy_Switch
+title: VS Code / Codex 多设备远程开发：自动代理与排错笔记
 date: 2026-07-29
-tags: [Toolchain, VSCode]
+tags:
+  - Toolchain
+  - VSCode
 aliases: []
 ---
 
-# VS Code Remote-SSH 多设备环境隔离、服务进程重置与排错指南
+# VS Code / Codex 多设备远程开发：自动代理与排错笔记
 
-## 1. 背景与核心需求
+## 1. 我的环境与目标
 
-在拥有多台客户端设备（如 **MacBook Pro** 与 **Windows Desktop**）并借助 Tailscale / WireGuard 等组网工具远程连接同一台 Linux 开发服务器时，我们通常希望服务器上的 Shell 能根据**当前发起的客户端设备**自动切换对应的代理配置（如 HTTP/SOCKS5 代理）：
+我有两台客户端，通过 Tailscale 连接同一台 Linux 开发服务器：
 
-- **Mac 设备**（Tailscale IP: `100.64.0.40`，代理端口 `7897`）
-    
-- **Windows 设备**（Tailscale IP: `100.64.0.4`，代理端口 `7890`）
-    
-- **Linux 远程服务器**（Tailscale IP: `100.64.0.15`）
-    
+| 设备           | Tailscale IP  | 本地代理               |
+| ------------ | ------------- | ------------------ |
+| MacBook      | `100.64.0.40` | Clash Verge `7897` |
+| Windows      | `100.64.0.4`  | 代理 `7890`          |
+| Linux Server | `100.64.0.15` | —                  |
 
-## 2. 排查过程与踩坑思维链 (Chain of Thought)
+我的目标是：
 
-整个问题的解决经历了从**网络层行为分析**到**进程生命周期与机制突破**的推演过程：
+```text
+Mac 连接服务器
+→ Server 自动使用 Mac 的代理 100.64.0.40:7897
 
-### 阶段一：Terminal 正常，但 VS Code 流量走向异常
-
-- **现象**：Mac 原生 Terminal 连服务器，`echo $SSH_CLIENT` 显示 Mac IP (`100.64.0.40`)；而 Mac VS Code 连接时，显示的却是 Windows IP (`100.64.0.4`)。
-    
-- **原因排查**：VS Code 作为 GUI 应用，默认会读取系统代理或设置中的 `Http: Proxy Support`。当本地存在代理软件转发时，VS Code 的 SSH 建连流量被本地代理拦截中转，导致服务端感知到的源 IP 变成了代理出口 IP。
-    
-- **阶段修复**：在 VS Code 中关闭 `Http: Proxy Support`，并在 Clash/Surge 等本地代理工具中将 Tailscale 网段（`100.64.0.0/10`）划入 Direct 直连规则。
-    
-
-### 阶段二：跨设备连接时环境变量“冻结”与端口一致性悬案
-
-- **现象**：Mac VS Code 恢复正常后，换用 Windows VS Code 连接服务器，新建终端执行 `echo $SSH_CLIENT`，依然显示 Mac 的 IP，且**源端口号完全相同**（如 `100.64.0.40 57268 22`）；但 Windows CMD 原生连接却显示 `100.64.0.4`。
-    
-- **关键突破**：TCP 协议中，不同物理设备建立的新连接**绝对不可能分配到完全相同的源端口号**。这表明：Windows VS Code 根本没有发起新的 Shell 主进程，而是挂载了 Mac 之前建立的远程服务端进程。
-    
-
-## 3. 底层机制与原理拆解
-
-要彻底解决该问题，必须理解 VS Code Remote-SSH 的工作原理与 Linux 进程继承关系。
-
-### 3.1 VS Code Remote-SSH 进程架构
-
-当通过 VS Code 连接远程服务器时，系统并非单纯建立一个 SSH 交互 Shell，而是形成了如下的树状进程模型：
-
-```Plaintext
-[本地 VS Code 客户端] 
-        │ (SSH Tunnel)
-        ▼
-[远程 Linux Server]
-        └── vscode-server (后台常驻守护进程，Node.js)
-                 ├── extension-host (插件宿主进程)
-                 └── terminal-server (终端管理进程)
-                          └── zsh (集成终端 Shell 子进程)
+Windows 连接服务器
+→ Server 自动使用 Windows 的代理 100.64.0.4:7890
 ```
 
-### 3.2 环境变量继承与进程生命周期固化
+并且同时兼容：
 
-1. **`vscode-server` 常驻机制**：当第一个客户端（如 Mac）连入服务器时，`sshd` 派生并启动了 `vscode-server` 进程。此时，`sshd` 将 Mac 的 SSH 环境变量（包括 `SSH_CLIENT=100.64.0.40 ...`）写入到了 `vscode-server` 主进程中。
-    
-2. **连接复用与复活 (Session Revive)**：当第二个客户端（如 Windows）连接同一台服务器时，为了提升连接速度，VS Code 默认会复用服务器上已有的 `vscode-server` 进程，而不会杀死重新启动。
-    
-3. **环境变量冻结**：在 Linux 中，**子进程只能继承父进程被创建时的环境变量**。因此，无论你在 Windows VS Code 里新建多少个终端标签页，它们都是由同一个 `vscode-server` 派生出来的，继承的依然是最初 Mac 建立连接时的 `$SSH_CLIENT`。
-    
-
-### 3.3 结论：为什么不能依赖 `$SSH_CLIENT`？
-
-在原生 Terminal / CMD 中，每次登录都会触发一次全新的 `sshd` 鉴权与 Shell 启动，`$SSH_CLIENT` 准确无误；而在 VS Code Remote 场景下，由于 `vscode-server` 进程的常驻性，**依靠网络层的 `$SSH_CLIENT` 来区分客户端设备是天然不可靠的**。
-
-## 4. 关键 VS Code Remote 配置项解析
-
-为了掌握 Remote-SSH 的运行逻辑，以下核心配置项建议明确理解并合理选用：
-
-|**配置项 (Setting Key)**|**建议值**|**作用与原理**|
-|---|---|---|
-|`http.proxySupport`|`off`|控制 VS Code 是否将请求中转至本地代理。在 SSH 连内网/ Tailscale 时设为 `off` 可防止连接被代理工具接管。|
-|`terminal.integrated.persistentSessionRevive`|`never` / `off`|控制重启或断开 VS Code 后是否恢复先前的终端会话。设为 `off` 可避免跨设备复用旧终端。|
-|`remote.SSH.useLocalServer`|`false`|控制是否在本地启动中转 server。在某些跨平台 SSH 隧道异常时关闭该项可恢复标准 SSH 行为。|
-|`remote.SSH.showLoginTerminal`|`true` (调试时)|建立连接时弹出一个原生终端显示 SSH 交互过程，方便排查秘钥鉴权失败、卡密码或 `~/.bashrc` 输出杂质问题。|
-|`remote.SSH.connectTimeout`|`15` ~ `30`|调整 SSH 建连超时时间（秒）。在网络延迟较大或代理中转延迟高时防止频繁超时。|
-
-## 5. 彻底断开与重置 `vscode-server` 操作指南
-
-当遇到环境变量彻底卡死、插件宿主崩溃或修改了全局 Profile 却不生效时，需要手动重置服务端进程。
-
-### 方法一：图形化面板安全清理（优先推荐）
-
-1. 在 VS Code 中按下 `Cmd + Shift + P` (Mac) 或 `Ctrl + Shift + P` (Win)。
-    
-2. 输入并执行：**`Remote-SSH: Kill VS Code Server on Host...`**。
-    
-3. 选择目标主机（如 `steins-workspace`），VS Code 会自动发送信号终止远端进程。
-    
-4. 按 `Cmd + Q` / `Alt + F4` **完全退出 VS Code** 后再重新打开。
-    
-
-### 方法二：在服务器终端中命令行强制 Kill
-
-如果你已经通过 SSH 连上了服务器，或者在 VS Code 终端内想强制重置：
-
-```Bash
-# 1. 查找当前的 vscode-server 进程
-ps aux | grep vscode-server
-
-# 2. 一键杀死当前用户所有的 vscode-server 及其派生终端
-pkill -f vscode-server
-
-# 或者精准杀死 Node.js 宿主进程
-kill -9 $(pgrep -f "vscode-server")
+```text
+Terminal / CMD
+VS Code Remote SSH
+Codex Remote
+Claude Remote
+...
 ```
 
-### 方法三：核弹级重置（解决服务端文件损坏/更新卡死）
+最终希望做到：
 
-当遇到 VS Code 频繁报错 `Setting up SSH Host...` 且长时间卡死，或者 `vscode-server` 二进制文件损坏时，彻底删除服务端缓存目录：
-
-```Bash
-# 在 Linux 服务器上执行（注意：这会删除已安装的远程 VS Code 插件，下次连接时会自动重装）
-rm -rf ~/.vscode-server
-
-# 如果使用了早期的 VS Code 版本，可能还包含以下路径
-rm -rf ~/.vscode-server-insiders
-```
-
-## 6. 终极解决方案：端侧变量注入 + 动态 Shell 路由
-
-既然依靠“服务端推断”不可靠，思路转变为：**由客户端 VS Code 主动向服务端终端注入当前设备的身份标识**。
-
-### 步骤 1：客户端配置（VS Code 本地用户设置）
-
-利用 VS Code 的 `terminal.integrated.env.linux` 配置，在打开远程 Linux 终端时自动注入自定义环境变量 `VSCODE_CLIENT_DEV`。
-
-- **Mac 端**（打开 Mac VS Code 的 `settings.json`）：
-
-```JSON
-{
-  "terminal.integrated.env.linux": {
-    "VSCODE_CLIENT_DEV": "mac"
-  }
-}
-```
-
-- **Windows 端**（打开 Windows VS Code 的 `settings.json`）：
-
-```JSON
-{
-  "terminal.integrated.env.linux": {
-    "VSCODE_CLIENT_DEV": "win"
-  }
-}
-```
-
-### 步骤 2：服务端脚本改写（`~/.auto-proxy.zsh`）
-
-在服务器上修改自动代理脚本，**优先校验客户端主动注入的变量**；如果非 VS Code 环境（如终端直连），再回退到依据 `$SSH_CLIENT` 识别。
-```Bash
-
-# ==========================================
-# 自动化代理切换脚本 (~/.auto-proxy.zsh)
-# ==========================================
-
-# --- 代理网络配置区 ---
-WIN_TS_IP="100.64.0.4"
-MAC_TS_IP="100.64.0.40"
-WIN_PROXY_PORT=7890
-MAC_PROXY_PORT=7897
-# ----------------------
-
-auto_proxy_switch() {
-    local client_ip
-    client_ip=$(echo "$SSH_CLIENT" | awk '{print $1}')
-
-    # 设置内网绕过代理名单
-    export no_proxy=127.0.0.1,localhost,192.168.0.0/16,100.64.0.0/10,.steins.net
-    export NO_PROXY="${no_proxy}"
-
-    # 清空历史代理变量
-    unset all_proxy ALL_PROXY http_proxy https_proxy HTTP_PROXY HTTPS_PROXY socks5_proxy
-
-    # ----------------------------------------------------
-    # 策略 1：优先根据 VS Code 客户端本地注入的环境变量判断
-    # ----------------------------------------------------
-    if [[ "${VSCODE_CLIENT_DEV}" == "win" ]]; then
-        export all_proxy=socks5h://${WIN_TS_IP}:${WIN_PROXY_PORT}
-        export ALL_PROXY=$all_proxy
-        export http_proxy=http://${WIN_TS_IP}:${WIN_PROXY_PORT}
-        export https_proxy=$http_proxy
-        export socks5_proxy=socks5://${WIN_TS_IP}:${WIN_PROXY_PORT}
-        return
-    elif [[ "${VSCODE_CLIENT_DEV}" == "mac" ]]; then
-        export all_proxy=socks5h://${MAC_TS_IP}:${MAC_PROXY_PORT}
-        export ALL_PROXY=$all_proxy
-        export http_proxy=http://${MAC_TS_IP}:${MAC_PROXY_PORT}
-        export https_proxy=$http_proxy
-        export socks5_proxy=socks5://${MAC_TS_IP}:${MAC_PROXY_PORT}
-        return
-    fi
-
-    # ----------------------------------------------------
-    # 策略 2：非 VS Code 环境（如 Mac Terminal / Win CMD），回退至 SSH 来源 IP 判断
-    # ----------------------------------------------------
-    if [[ "${client_ip}" =~ ^192\.168\.3\. ]] || [[ "${client_ip}" == "${WIN_TS_IP}" ]]; then
-        export all_proxy=socks5h://${WIN_TS_IP}:${WIN_PROXY_PORT}
-        export ALL_PROXY=$all_proxy
-        export http_proxy=http://${WIN_TS_IP}:${WIN_PROXY_PORT}
-        export https_proxy=$http_proxy
-        export socks5_proxy=socks5://${WIN_TS_IP}:${WIN_PROXY_PORT}
-    elif [[ "${client_ip}" == "${MAC_TS_IP}" ]]; then
-        export all_proxy=socks5h://${MAC_TS_IP}:${MAC_PROXY_PORT}
-        export ALL_PROXY=$all_proxy
-        export http_proxy=http://${MAC_TS_IP}:${MAC_PROXY_PORT}
-        export https_proxy=$http_proxy
-        export socks5_proxy=socks5://${MAC_TS_IP}:${MAC_PROXY_PORT}
-    fi
-}
-
-# 挂载时立即执行
-auto_proxy_switch
-```
-
-## 7. 常见故障排查手册 (Troubleshooting Playbook)
-
-除了代理与环境变量问题，以下是远程开发中最常碰到的衍生问题及诊断解法：
-
-### 场景 A：VS Code 始终卡在 "Downloading VS Code Server"
-
-- **原因**：服务器自身无法访问 GitHub / Microsoft CDN 来下载对应 Commit 的 `vscode-server` 包。
-    
-- **解法**：临时启动代理，或者在服务器上手动配置环境变量或代理。如果连接已挂载，可以在服务器上跑代理配置，或者在本地下载解压包上传至 `~/.vscode-server/bin/<commit-id>/` 目录。
-    
-
-### 场景 B：修改了 `~/.zshrc` 或环境变量后，VS Code 内集成终端不生效
-
-- **原因**：VS Code 的 Shell Integration 功能缓存了初始化环境，或者使用了持久化终端。
-    
-- **解法**：
-    
-    1. 在终端面板中点击**垃圾桶图标**关闭当前 Shell，而不是只点 `+` 号。
-        
-    2. 执行 `source ~/.zshrc`。
-        
-    3. 执行 `Kill VS Code Server on Host` 重启服务端。
-        
-
-### 场景 C：连入后出现 `Bad owner or permissions on ~/.ssh/config`
-
-- **原因**：OpenSSH 权限检查严格，`~/.ssh/config` 或私钥文件权限过于宽松。
-    
-- **解法**：
-    
-    - **Mac / Linux**：`chmod 600 ~/.ssh/config && chmod 700 ~/.ssh`
-        
-    - **Windows**：右键配置文件 -> 属性 -> 安全 -> 高级 -> 禁用继承，并仅保留当前用户的完全控制权限。
-        
-
-### 场景 D：终端频繁出现 `echo` 冲突或脚本解析失败
-
-- **原因**：服务器上的 `~/.bashrc` 或 `~/.zshrc` 包含了交互式输出（例如在非交互 Shell 中执行了 `echo "hello"`），这会干扰 VS Code 远程脚本解析 JSON。
-    
-- **解法**：在 `~/.zshrc` 或 `~/.bashrc` 的顶部加上非交互式保护：
-    
-    Bash
-    
-    ```
-    # 如果是非交互式 Shell，直接返回，避免输出任何字符串
-    [[ $- != *i* ]] && return
-    ```
-    
-
-## 8. 效果验证与总结
-
-完成上述配置后，运行架构达到了完美解耦的状态：
-
-|**客户端类型**|**连接方式**|**识别机制**|**生效代理 IP & 端口**|
-|---|---|---|---|
-|**MacBook**|Mac Terminal (SSH)|`$SSH_CLIENT` (`100.64.0.40`)|`100.64.0.40:7897`|
-|**MacBook**|Mac VS Code|`VSCODE_CLIENT_DEV=mac`|`100.64.0.40:7897`|
-|**Windows**|Windows CMD (SSH)|`$SSH_CLIENT` (`100.64.0.4`)|`100.64.0.4:7890`|
-|**Windows**|Windows VS Code|`VSCODE_CLIENT_DEV=win`|`100.64.0.4:7890`|
-
-### 最佳实践复盘
-
-1. **网络层与应用层分离**：网络层的 IP 地址容易受代理中转、会话复用等因素干扰，在复杂的远程开发工具链中，通过**应用层显式传递环境变量（Terminal Env Injection）** 是处理多端差异最稳妥的方式。
-    
-2. **理解守护进程生命周期**：Remote-SSH 工具（如 VS Code、Cursor、JetBrains Remote）普遍存在服务端守护进程常驻机制，排查这类问题时，重点关注父子进程的环境变量继承，而非单纯关注网络连接本身。
+> 客户端只负责表明“我是谁”，服务器自动选择对应代理。
 
 ---
 
-## 相关笔记
+# 2. 最终架构
 
-**代理与远程访问：不同平台上的同一类问题**
+整体链路：
 
-- [[Linux服务器挂靠Windows V2Ray代理 完整配置笔记（适配ZSH）]]
-- [[Mac_Terminal_配置_Clash_Verge_代理完整笔记]]
-- [[macOS_Headscale_Tailscale_接入与避坑指南]]
-- [[Windows _ Mac 双端免密连接 Linux 远程服务器完整指南]]
-- [[服务器指纹失效]]
+```text
+Mac
+100.64.0.40:7897
+       ▲
+       │ Tailscale
+       │
+       │
+Linux Server
+100.64.0.15
+       │
+       │ 自动判断客户端
+       ▼
+.auto-proxy.zsh
 
+
+Windows
+100.64.0.4:7890
+       ▲
+       │ Tailscale
+       └──────── Server
+```
+
+服务器最终设置：
+
+```text
+Mac:
+http_proxy=http://100.64.0.40:7897
+
+Windows:
+http_proxy=http://100.64.0.4:7890
+```
+
+这里没有额外 SSH 端口转发。
+
+---
+
+# 3. 为什么不能只依赖 `$SSH_CLIENT`
+
+普通 SSH：
+
+```bash
+ssh steins-workspace
+```
+
+服务器通常可以通过：
+
+```bash
+echo $SSH_CLIENT
+```
+
+看到实际客户端，例如：
+
+```text
+100.64.0.40 57268 22
+```
+
+因此 Terminal / CMD 场景可以直接根据 IP 判断：
+
+```text
+100.64.0.40 → Mac
+100.64.0.4  → Windows
+```
+
+但是 VS Code Remote SSH 比普通 SSH 多了一层长期存在的远程服务：
+
+```text
+Local VS Code
+      │
+      │ SSH
+      ▼
+Linux Server
+      │
+      └── VS Code Server
+              │
+              ├── Extension Host
+              │
+              └── Terminal
+                     └── zsh
+```
+
+VS Code Server、终端恢复以及长期存在的后台进程，会让：
+
+```text
+“当前这个 Terminal 属于哪台客户端”
+```
+
+和：
+
+```text
+“最初启动父进程的是哪条 SSH 连接”
+```
+
+不一定始终是一回事。
+
+因此：
+
+> 普通 SSH 可以优先使用 `$SSH_CLIENT`；VS Code 集成终端最好显式告诉服务器当前客户端是哪台机器。
+
+---
+
+# 4. VS Code 显式注入客户端身份
+
+Mac VS Code：
+
+```json
+"terminal.integrated.env.linux": {
+    "VSCODE_CLIENT_DEV": "mac"
+}
+```
+
+Windows VS Code：
+
+```json
+"terminal.integrated.env.linux": {
+    "VSCODE_CLIENT_DEV": "win"
+}
+```
+
+服务器因此可以优先判断：
+
+```text
+VSCODE_CLIENT_DEV=mac
+→ Mac
+
+VSCODE_CLIENT_DEV=win
+→ Windows
+```
+
+没有这个变量时，再回退到：
+
+```bash
+$SSH_CLIENT
+```
+
+这样形成两级判断：
+
+```text
+VS Code
+   ↓
+VSCODE_CLIENT_DEV
+   ↓
+优先判断客户端
+
+普通 SSH
+   ↓
+SSH_CLIENT
+   ↓
+回退判断客户端
+```
+
+需要注意：
+
+> `terminal.integrated.env.linux` 主要影响 VS Code 的集成终端，不应该把它理解成“给所有 VS Code Remote 后台进程注入环境变量”。
+
+这是后面排查 Codex 时尤其需要区分的一点。
+
+---
+
+# 5. 自动代理脚本
+
+服务器：
+
+```text
+~/.auto-proxy.zsh
+```
+
+建议保持逻辑简单：
+
+```zsh
+# ==========================================
+# 多设备自动代理
+# ==========================================
+
+WIN_TS_IP="100.64.0.4"
+MAC_TS_IP="100.64.0.40"
+
+WIN_PROXY_PORT=7890
+MAC_PROXY_PORT=7897
+
+
+_set_proxy() {
+    local host="$1"
+    local port="$2"
+
+    export all_proxy="socks5h://${host}:${port}"
+    export ALL_PROXY="${all_proxy}"
+
+    export http_proxy="http://${host}:${port}"
+    export HTTP_PROXY="${http_proxy}"
+
+    export https_proxy="http://${host}:${port}"
+    export HTTPS_PROXY="${https_proxy}"
+
+    export socks5_proxy="socks5h://${host}:${port}"
+}
+
+
+_clear_proxy() {
+    unset all_proxy ALL_PROXY
+    unset http_proxy HTTP_PROXY
+    unset https_proxy HTTPS_PROXY
+    unset socks5_proxy SOCKS5_PROXY
+}
+
+
+auto_proxy_switch() {
+    local client_ip
+    client_ip=$(echo "${SSH_CLIENT}" | awk '{print $1}')
+
+    export no_proxy="127.0.0.1,localhost,192.168.0.0/16,100.64.0.0/10,.steins.net"
+    export NO_PROXY="${no_proxy}"
+
+    # VS Code：Mac
+    if [[ "${VSCODE_CLIENT_DEV}" == "mac" ]]; then
+        _clear_proxy
+        _set_proxy "${MAC_TS_IP}" "${MAC_PROXY_PORT}"
+        return
+    fi
+
+    # VS Code：Windows
+    if [[ "${VSCODE_CLIENT_DEV}" == "win" ]]; then
+        _clear_proxy
+        _set_proxy "${WIN_TS_IP}" "${WIN_PROXY_PORT}"
+        return
+    fi
+
+    # 普通 SSH：Windows
+    if [[ "${client_ip}" =~ ^192\.168\.3\. ]] || \
+       [[ "${client_ip}" == "${WIN_TS_IP}" ]]; then
+        _clear_proxy
+        _set_proxy "${WIN_TS_IP}" "${WIN_PROXY_PORT}"
+        return
+    fi
+
+    # 普通 SSH：Mac
+    if [[ "${client_ip}" == "${MAC_TS_IP}" ]]; then
+        _clear_proxy
+        _set_proxy "${MAC_TS_IP}" "${MAC_PROXY_PORT}"
+        return
+    fi
+}
+
+auto_proxy_switch
+```
+
+加载：
+
+```zsh
+# ~/.zshenv
+
+[ -f ~/.auto-proxy.zsh ] && source ~/.auto-proxy.zsh
+```
+
+之前放在：
+
+```text
+~/.zshrc
+```
+
+后来改到：
+
+```text
+~/.zshenv
+```
+
+原因是 `.zshrc` 主要针对交互式 zsh，而 `.zshenv` 的覆盖范围更广。
+
+但也因此脚本中最好不要：
+
+```text
+一启动 zsh 就无条件清除代理
+```
+
+而应该：
+
+> 先判断当前是哪台客户端，识别成功后再修改代理。
+
+---
+
+# 6. 今天遇到的问题：Codex 一直 Reconnecting
+
+今天 Codex Remote SSH 表面上可以连接服务器，但发送消息后不断出现：
+
+```text
+Reconnecting... waiting for network
+```
+
+一开始容易误以为：
+
+```text
+Codex SSH 断了
+```
+
+实际上需要把两条链路分开看：
+
+```text
+第一条：
+
+Mac
+ ↓
+SSH
+ ↓
+Server
+
+第二条：
+
+Server
+ ↓
+Proxy
+ ↓
+Mac Clash
+ ↓
+OpenAI
+```
+
+第一条可以完全正常，而第二条失败。
+
+所以：
+
+> “SSH Connected” 不代表远程 Codex 能访问 OpenAI。
+
+---
+
+# 7. 今天真正的根因
+
+服务器当时的代理：
+
+```bash
+http_proxy=http://100.64.0.40:7897
+https_proxy=http://100.64.0.40:7897
+all_proxy=socks5h://100.64.0.40:7897
+```
+
+测试：
+
+```bash
+curl -I https://api.openai.com/v1/models
+```
+
+得到：
+
+```text
+Failed to connect to 100.64.0.40 port 7897
+```
+
+于是先验证 Tailscale：
+
+```bash
+tailscale ping 100.64.0.40
+```
+
+正常：
+
+```text
+pong from cometmacbookpro
+```
+
+说明：
+
+```text
+Server → Mac ✅
+```
+
+问题进一步缩小到：
+
+```text
+Server → Mac:7897 ❌
+```
+
+---
+
+# 8. Clash Verge 的关键问题
+
+Mac：
+
+```bash
+sudo lsof -nP -iTCP:7897 -sTCP:LISTEN
+```
+
+结果：
+
+```text
+verge-mihomo ... TCP 127.0.0.1:7897 (LISTEN)
+```
+
+而不是：
+
+```text
+*:7897
+```
+
+这意味着 Clash 只接受：
+
+```text
+Mac 自己 → 127.0.0.1:7897
+```
+
+但是服务器访问的是：
+
+```text
+Server → 100.64.0.40:7897
+```
+
+自然连接不上。
+
+这也是本次 Codex：
+
+```text
+Reconnecting... waiting for network
+```
+
+的核心原因。
+
+---
+
+# 9. 关键经验：代理地址正确，不代表代理可达
+
+以前只关注：
+
+```text
+IP 对不对？
+端口对不对？
+```
+
+这次发现还必须检查：
+
+```text
+服务监听在哪个网络接口？
+```
+
+例如：
+
+```text
+127.0.0.1:7897
+```
+
+只代表：
+
+> 本机可以访问。
+
+而：
+
+```text
+0.0.0.0:7897
+```
+
+或允许对应网络接口访问，才意味着其他设备有机会通过：
+
+```text
+100.64.0.40:7897
+```
+
+连接。
+
+因此以后遇到类似问题，第一组命令就应该是：
+
+```bash
+tailscale ping 100.64.0.40
+
+nc -vz 100.64.0.40 7897
+```
+
+Mac：
+
+```bash
+sudo lsof -nP -iTCP:7897 -sTCP:LISTEN
+```
+
+三个测试分别验证：
+
+```text
+机器可达？
+↓
+端口可达？
+↓
+服务到底监听在哪里？
+```
+
+---
+
+# 10. 曾尝试 SSH RemoteForward
+
+为了绕过 Clash 只监听 localhost 的问题，曾尝试：
+
+```sshconfig
+RemoteForward 17897 127.0.0.1:7897
+```
+
+链路变成：
+
+```text
+Server 127.0.0.1:17897
+        │
+        │ SSH Tunnel
+        ▼
+Mac 127.0.0.1:7897
+        │
+        ▼
+Clash
+```
+
+测试：
+
+```bash
+curl -x http://127.0.0.1:17897 \
+  -I https://api.openai.com/v1/models
+```
+
+成功得到：
+
+```text
+HTTP/1.1 200 Connection established
+HTTP/2 401
+```
+
+这里的 `401` 是正常结果：
+
+> 没带 OpenAI API Key，所以身份认证失败，但网络链路已经完全打通。
+
+这个实验证明了：
+
+```text
+Codex 本身没坏
+OpenAI 也能访问
+
+真正坏的是：
+Server → Mac Clash
+```
+
+---
+
+# 11. RemoteForward 又踩了一个坑
+
+一开始把：
+
+```sshconfig
+RemoteForward 17897 127.0.0.1:7897
+ExitOnForwardFailure yes
+```
+
+直接放到了：
+
+```sshconfig
+Host steins-workspace
+```
+
+但是 Codex、VS Code、Terminal 都会独立创建 SSH 连接。
+
+第一条连接：
+
+```text
+成功占用 Server :17897
+```
+
+第二条连接：
+
+```text
+再次尝试绑定 :17897
+```
+
+结果：
+
+```text
+remote port forwarding failed for listen port 17897
+```
+
+并且由于：
+
+```sshconfig
+ExitOnForwardFailure yes
+```
+
+整个 SSH 连接直接被判失败。
+
+Codex 当时的报错：
+
+```text
+Authenticated to 100.64.0.15 using "publickey"
+
+Error:
+remote port forwarding failed for listen port 17897
+```
+
+这句话非常有价值：
+
+```text
+Authenticated
+```
+
+说明 SSH 密钥认证其实成功了。
+
+真正失败的是：
+
+```text
+RemoteForward
+```
+
+所以排错时不要只看：
+
+```text
+SSH connection failed
+```
+
+要继续看**后面的具体错误**。
+
+---
+
+# 12. 为什么最后不使用 RemoteForward
+
+RemoteForward 本身没问题，而且安全隔离更好。
+
+但是如果长期使用，需要：
+
+```text
+单独维护一个 SSH Tunnel
+```
+
+例如：
+
+```text
+steins-workspace
+→ VS Code / Codex / Terminal
+
+steins-workspace-proxy
+→ 专门维持代理
+```
+
+结构会变成：
+
+```text
+Mac
+│
+├── Proxy SSH Tunnel
+│
+├── VS Code SSH
+├── Codex SSH
+└── Terminal SSH
+```
+
+对于目前这个需求有些复杂。
+
+而原来的 Tailscale 方案：
+
+```text
+Server
+ ↓
+100.64.0.40:7897
+ ↓
+Mac Clash
+```
+
+更直接。
+
+因此最终仍然采用：
+
+> **Tailscale IP + 客户端自动识别 + Clash 对 Tailscale 网络提供代理。**
+
+---
+
+# 13. 原方案真正需要满足的条件
+
+Mac：
+
+```text
+100.64.0.40:7897
+```
+
+必须从 Server 可达。
+
+Windows：
+
+```text
+100.64.0.4:7890
+```
+
+也必须从 Server 可达。
+
+因此代理软件不能只监听：
+
+```text
+127.0.0.1
+```
+
+需要允许来自 Tailscale 的连接。
+
+Clash Verge 中对应：
+
+```text
+Allow LAN / 允许局域网连接
+```
+
+但需要注意安全性：
+
+> 开启之后不要默认认为只有服务器能访问代理。
+
+最好配合 Tailscale ACL / 防火墙限制来源，只允许可信设备访问代理端口。
+
+---
+
+# 14. VS Code 当前配置
+
+Mac：
+
+```json
+{
+  "terminal.integrated.env.linux": {
+    "VSCODE_CLIENT_DEV": "mac"
+  },
+
+  "http.proxySupport": "off",
+
+  "remote.SSH.useLocalServer": false
+}
+```
+
+其中职责分别是：
+
+```text
+VSCODE_CLIENT_DEV
+→ 告诉远程 Terminal 当前客户端是 Mac
+
+http.proxySupport
+→ 控制 VS Code 自身代理行为
+
+remote.SSH.useLocalServer
+→ 控制 Remote SSH 的本地 helper 模式
+```
+
+尤其注意：
+
+```text
+http.proxySupport = off
+```
+
+并不等于：
+
+```text
+远程服务器自动获得 Mac 的代理
+```
+
+服务器代理仍然由：
+
+```text
+~/.auto-proxy.zsh
+```
+
+负责。
+
+---
+
+# 15. 一套固定排障流程
+
+以后再出现：
+
+```text
+SSH 正常
+但 Codex / curl / git 无法访问外网
+```
+
+不要先改一堆配置。
+
+按下面顺序排：
+
+```text
+① SSH 是否正常？
+
+ssh steins-workspace
+
+
+② 当前识别的是谁？
+
+echo $VSCODE_CLIENT_DEV
+echo $SSH_CLIENT
+
+
+③ 当前代理是什么？
+
+env | grep -i proxy
+
+
+④ Server 能否找到客户端？
+
+tailscale ping 100.64.0.40
+
+
+⑤ Server 能否访问代理端口？
+
+nc -vz 100.64.0.40 7897
+
+
+⑥ 客户端代理监听在哪里？
+
+sudo lsof -nP -iTCP:7897 -sTCP:LISTEN
+
+
+⑦ 强制指定代理测试
+
+curl -x http://100.64.0.40:7897 \
+  -I https://api.openai.com/v1/models
+
+
+⑧ 最后才测试应用
+
+codex
+git
+pip
+uv
+```
+
+这条排障链非常重要：
+
+```text
+SSH
+↓
+设备识别
+↓
+环境变量
+↓
+Tailscale
+↓
+TCP Port
+↓
+Proxy
+↓
+Internet
+↓
+Codex
+```
+
+不要一看到：
+
+```text
+Codex Reconnecting
+```
+
+就直接从 Codex 开始查。
+
+---
+
+# 16. VS Code Server 的清理
+
+遇到：
+
+```text
+Remote 环境变量异常
+Terminal 恢复了旧环境
+扩展宿主异常
+VS Code Server 状态异常
+```
+
+优先使用：
+
+```text
+Command Palette
+→ Remote-SSH: Kill VS Code Server on Host...
+```
+
+然后完全退出 VS Code 再重新连接。
+
+命令行也可以查看：
+
+```bash
+ps aux | grep vscode
+```
+
+必要时：
+
+```bash
+pkill -f vscode-server
+```
+
+只有确认 Server 安装本身损坏时，才考虑：
+
+```bash
+rm -rf ~/.vscode-server
+```
+
+因为这会导致 Remote Server 和部分远程扩展重新安装，不应该作为日常第一排障手段。
+
+---
+
+# 17. 本次最重要的几个经验
+
+**经验 1：SSH 通，不代表应用层网络通。**
+
+```text
+Mac → Server
+```
+
+和：
+
+```text
+Server → OpenAI
+```
+
+是两条不同链路。
+
+---
+
+**经验 2：IP 能 ping 通，不代表端口能访问。**
+
+这次：
+
+```text
+tailscale ping 100.64.0.40 ✅
+
+100.64.0.40:7897 ❌
+```
+
+最终原因就是 Clash 只监听：
+
+```text
+127.0.0.1:7897
+```
+
+---
+
+**经验 3：先验证最底层，再怀疑应用。**
+
+最有价值的几个命令：
+
+```bash
+tailscale ping
+nc -vz
+lsof
+curl -x
+env
+```
+
+远比一开始重装 Codex / VS Code 更有效。
+
+---
+
+**经验 4：错误标题不一定是真正原因。**
+
+Codex：
+
+```text
+SSH connection failed
+```
+
+但真正日志是：
+
+```text
+Authenticated successfully
+
+remote port forwarding failed
+```
+
+说明：
+
+```text
+Authentication ✅
+Port Forward ❌
+```
+
+读完整日志比看 UI 标题重要。
+
+---
+
+**经验 5：不要为了修一个局部问题过度增加架构复杂度。**
+
+今天为了绕过 Clash localhost 限制，一度引入：
+
+```text
+RemoteForward
+独立 Host
+专用 SSH Tunnel
+launchd
+```
+
+这些方案技术上成立，但对于当前需求不一定必要。
+
+真正的问题只是：
+
+```text
+Clash 没有允许 Server 访问 7897
+```
+
+因此先修最小问题，往往比重新设计整套链路更合理。
+
+---
+
+# 18. 当前最终方案
+
+最终保持：
+
+```text
+Mac
+Tailscale 100.64.0.40
+Clash :7897
+       │
+       │
+       ▼
+Server 100.64.0.15
+
+.auto-proxy.zsh：
+
+VS Code Mac
+→ VSCODE_CLIENT_DEV=mac
+→ 100.64.0.40:7897
+
+VS Code Windows
+→ VSCODE_CLIENT_DEV=win
+→ 100.64.0.4:7890
+
+普通 SSH
+→ SSH_CLIENT
+→ 自动判断 Mac / Windows
+```
+
+而：
+
+```text
+RemoteForward
+steins-workspace-proxy
+17897
+```
+
+全部不作为最终架构的一部分。
+
+最终原则可以压缩成一句话：
+
+> **客户端负责声明身份，服务器负责选择代理，Tailscale 负责设备互通，代理软件负责真正提供可达的代理端口。**
+
+这比把“身份识别、SSH 隧道、代理转发”全部耦合到一条 SSH Connection 里更容易维护。
