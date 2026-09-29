@@ -11,6 +11,7 @@ aliases: []
 
 ## 一、目标与环境
 
+### 环境：
 我有 Mac 和 Windows 两台客户端，通过 Tailscale 连接同一台 Linux 开发服务器，希望：
 
 - 使用 Mac 的 VSCode / Terminal 连接服务器时，服务器自动使用 Mac 上的代理；
@@ -28,6 +29,11 @@ aliases: []
 |MacBook|`100.64.0.40`|`7897`|
 |Windows|`100.64.0.4`|`7890`|
 |Linux Server|`100.64.0.15`|—|
+
+### 目标：
+- Mac 连进来 → Server 自动用 `100.64.0.40:7897`
+- Windows 连进来 → Server 自动用 `100.64.0.4:7890`
+- 兼容 Terminal / VS Code Remote SSH / Codex Remote / Claude Remote
 
 最终链路：
 
