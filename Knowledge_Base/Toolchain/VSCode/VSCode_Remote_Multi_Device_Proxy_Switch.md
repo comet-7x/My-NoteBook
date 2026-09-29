@@ -60,58 +60,19 @@ Windows(100.64.0.4:7890)
 # 第一步：配置 Clash Verge
 
 ## 1. 安装并确认 Clash Verge 正常工作
-
-首先在客户端安装并启动 Clash Verge。
-
-以 Mac 为例，确认系统代理：
-
-```bash
-scutil --proxy
-```
-
-例如：
-
-```bash
-<dictionary> {
-  ExceptionsList : <array> {
-    0 : 127.0.0.1
-    1 : 192.168.0.0/16
-    2 : 10.0.0.0/8
-    3 : 172.16.0.0/12
-    4 : localhost
-    5 : *.local
-    6 : *.crashlytics.com
-    7 : <local>
-  }
-  FTPPassive : 1
-  HTTPEnable : 1
-  HTTPPort : 7897
-  HTTPProxy : 127.0.0.1
-  HTTPSEnable : 1
-  HTTPSPort : 7897
-  HTTPSProxy : 127.0.0.1
-  ProxyAutoConfigEnable : 0
-  SOCKSEnable : 1
-  SOCKSPort : 7897
-  SOCKSProxy : 127.0.0.1
-}
-```
-
-说明当前 Clash 使用：
-
-```text
-127.0.0.1:7897
-```
-
-作为代理端口。
-
-也可以：
+1. 安装 [Clash Verge](https://clashverge.dev/)（Windows 上同理，用你自己的客户端）。
+2. 在设置里打开 **Allow LAN / 允许局域网连接**。
+3. 查看混合代理端口（Mac 上是 `7897`，Windows 上是 `7890`）。
+4. 在客户端本机确认监听地址，以 Mac 为例，确认系统代理：
 
 ```bash
 sudo lsof -nP -iTCP:7897 -sTCP:LISTEN
 ```
+期望看到的是：
 
-查看真实监听情况。
+```
+verge-mihomo ... TCP *:7897 (LISTEN)     # 或 0.0.0.0:7897
+```
 
 ---
 
