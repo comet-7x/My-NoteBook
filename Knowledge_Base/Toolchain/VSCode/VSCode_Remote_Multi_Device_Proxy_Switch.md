@@ -100,6 +100,7 @@ echo $SSH_CLIENT
 ```text
 100.64.0.40 → Mac
 100.64.0.4  → Windows
+...
 ```
 
 但是 VS Code Remote SSH 比普通 SSH 多了一层长期存在的远程服务：
