@@ -85,11 +85,19 @@ http_proxy=http://100.64.0.4:7890
 
 # 3. 为什么不能只依赖 `$SSH_CLIENT`
 
-普通 SSH：
+## 普通 SSH：（直接 `ssh user@host`）
 
 ```bash
+# 正常使用
+ssh zhihao@100.64.0.15
+
+# 假设本地~/.ssh/config文件配置了这个端口的免密连接
 ssh steins-workspace
 ```
+- 建立一条 SSH 连接 → 启动一个 zsh/bash 等终端进程
+- 环境变量 `SSH_CLIENT` 由 sshd 注入：保存**本次 TCP 连接的源 IP + 端口**
+- 进程树：`sshd → zsh`
+- 生命周期：SSH 连接断开，zsh 直接销毁。 所以**`$SSH_CLIENT` 稳定代表当前终端对应的客户端机器**。
 
 服务器通常可以通过：
 
@@ -111,7 +119,8 @@ echo $SSH_CLIENT
 ...
 ```
 
-但是 VS Code Remote SSH 比普通 SSH 多了一层长期存在的远程服务：
+## VS Code Remote SSH
+VS Code Remote SSH 比普通 SSH 多了一层长期存在的远程服务：
 
 ```text
 Local VS Code
@@ -120,38 +129,28 @@ Local VS Code
       ▼
 Linux Server
       │
-      └── VS Code Server
+      └── VS Code Server（常驻后台进程，一次SSH连接拉起，多个终端共享）
               │
               ├── Extension Host
               │
               └── Terminal
                      └── zsh
 ```
+- vscode-server 是常驻后台服务：只要 VS Code 远程窗口保持打开，vscode-server 进程就一直活着；
+- 所有 VS Code 内置终端，全部由同一个 vscode-server 主进程派生出来；
+- `SSH_CLIENT` 环境变量只在最开始建立 SSH 连接的那一瞬间注入给 vscode-server 主进程。
 
-VS Code Server、终端恢复以及长期存在的后台进程，会让：
-
-```text
-“当前这个 Terminal 属于哪台客户端”
-```
-
-和：
-
-```text
-“最初启动父进程的是哪条 SSH 连接”
-```
-
-不一定始终是一回事。
+VS Code Server、终端恢复以及长期存在的后台进程，会让：`“当前这个 Terminal 属于哪台客户端”`和：`“最初启动父进程的是哪条 SSH 连接”` ，不一定始终是一回事。
 
 因此：
-
 > 普通 SSH 可以优先使用 `$SSH_CLIENT`；VS Code 集成终端最好显式告诉服务器当前客户端是哪台机器。
 
 ---
 
 # 4. VS Code 显式注入客户端身份
+进入VsCode软件，Mac：`CMD+,`  / WIN：`Crtl+,`  打开设置，配置以下内容
 
 Mac VS Code：
-
 ```json
 "terminal.integrated.env.linux": {
     "VSCODE_CLIENT_DEV": "mac"
@@ -159,7 +158,6 @@ Mac VS Code：
 ```
 
 Windows VS Code：
-
 ```json
 "terminal.integrated.env.linux": {
     "VSCODE_CLIENT_DEV": "win"
@@ -167,7 +165,6 @@ Windows VS Code：
 ```
 
 服务器因此可以优先判断：
-
 ```text
 VSCODE_CLIENT_DEV=mac
 → Mac
@@ -177,13 +174,11 @@ VSCODE_CLIENT_DEV=win
 ```
 
 没有这个变量时，再回退到：
-
 ```bash
 $SSH_CLIENT
 ```
 
 这样形成两级判断：
-
 ```text
 VS Code
    ↓
