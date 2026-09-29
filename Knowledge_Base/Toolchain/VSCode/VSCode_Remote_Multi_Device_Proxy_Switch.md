@@ -122,11 +122,11 @@ sudo lsof -nP -iTCP:7897 -sTCP:LISTEN
 它意味着：
 
 ```text
-Mac 自己
+  Mac 自己
     ↓
 127.0.0.1:7897
     ↓
-Clash
+  Clash
 ```
 
 可以正常使用。
@@ -134,11 +134,11 @@ Clash
 但是 Linux Server 访问的是：
 
 ```text
-Server
+  Server
     ↓
 100.64.0.40:7897
     ↓
-Mac
+  Mac
 ```
 
 如果 Clash 只监听 `127.0.0.1`，服务器即使能通过 Tailscale 找到 Mac，也无法使用这个代理。
@@ -185,29 +185,18 @@ tailscale ping 100.64.0.40
 可能得到：
 
 ```text
-pong from cometmacbookpro
+pong from cometmacbookpro (100.64.0.40) via DERP(cn) in 55ms
+pong from cometmacbookpro (100.64.0.40) via DERP(cn) in 56ms
+...
 ```
 
-这只能证明：
-
-```text
-Server → Mac
-```
-
-网络可达。
-
-但不能证明：
-
-```text
-Server → Mac:7897
-```
-
-也可达。
+这只能证明：`Server → Mac`网络可达。但不能证明：`Server → Mac:7897` 也可达。
 
 需要继续：
 
 ```bash
 nc -vz 100.64.0.40 7897
+# Connection to 100.64.0.40 7897 port [tcp/*] succeeded!
 ```
 
 因此应该区分三个层次：
