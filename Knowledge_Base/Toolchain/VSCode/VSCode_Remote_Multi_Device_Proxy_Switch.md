@@ -61,6 +61,14 @@ Windows(100.64.0.4:7890)
 
 ```
 
+```mermaid
+flowchart LR
+    Mac[Mac<br/>100.64.0.40:7897] --Tailscale--> Server[Linux Server<br/>100.64.0.15]
+    Win[Windows<br/>100.64.0.4:7890] --Tailscale--> Server
+    subgraph Linux Server
+        auto[.auto-proxy.zsh<br/>自动判断客户端IP]
+    end
+```
 服务器最终设置：
 
 ```text
