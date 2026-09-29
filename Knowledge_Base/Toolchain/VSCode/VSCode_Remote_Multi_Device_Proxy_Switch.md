@@ -12,13 +12,15 @@ aliases: []
 
 > 客户端只声明"我是谁"，服务器自动选对应代理；SSH 通 ≠ 应用能联网。
 
-```
-Mac(100.64.0.40:7897)  ──Tailscale──┐
-                                    │
-                            Linux Server(100.64.0.15)
-                                    │
-Windows(100.64.0.4:7890) ──Tailscale┘
-                  └─ .auto-proxy.zsh（自动识别客户端）
+```text
+Mac(100.64.0.40:7897)
+       │ Tailscale
+       ▼
+Linux Server(100.64.0.15)
+       │ 内部运行 .auto-proxy.zsh（自动识别客户端）
+       ▲
+       │ Tailscale
+Windows(100.64.0.4:7890)
 ```
 
 | 设备 | Tailscale IP | 本地代理 |
