@@ -37,6 +37,7 @@ aliases: []
 ## Mac
 
 - [[Mac_Terminal_配置_Clash_Verge_代理完整笔记]]
+- [[Mac_Antigravity_GUI_配置_Clash_Verge_代理完整笔记]]
 - [[Mac学习笔记]]
 - [[Mac选购笔记]]
 
